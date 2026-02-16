@@ -2,16 +2,13 @@ import { useNavigate } from "react-router-dom";
 import photosCollage from "@/assets/photos-collage.png";
 import aboutCollage from "@/assets/about-collage.png";
 import discCollage from "@/assets/disc-collage.svg";
-
-const quadrants = [
-  { label: "Projects", path: "/projects", rotation: -45, image: discCollage },
-  { label: "Photos", path: "/photos", rotation: 45, image: photosCollage },
-  { label: "Experience", path: "/experience", rotation: 225, image: discCollage },
-  { label: "About Me", path: "/about", rotation: 135, image: aboutCollage },
-];
+import photosTitle from "@/assets/photos-title.png";
+import aboutTitle from "@/assets/about-title.png";
 
 const RotatingDisc = () => {
   const navigate = useNavigate();
+  const photosBaseTransform = "translateY(5.5rem) scale(1.35)";
+  const photosHoverTransform = "translateY(5.5rem) scale(1.45)";
 
   return (
     <div className="relative">
@@ -25,32 +22,26 @@ const RotatingDisc = () => {
             "0 10px 40px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3)",
         }}
       >
-        {/* Inner disc with images - rotating */}
-        <div
-          className="w-full h-full rounded-full overflow-hidden relative animate-spin-slow"
-          style={{
-            boxShadow: "inset 0 2px 10px rgba(0, 0, 0, 0.2)",
-          }}
-        >
-          {/* Background image for quadrants */}
+        {/* Inner rotating disc */}
+        <div className="w-full h-full rounded-full overflow-hidden relative animate-spin-slow">
+          {/* Disc background */}
           <img
             src={discCollage}
-            alt="Background collage"
-            className="w-full h-full object-cover"
-            style={{ position: "relative", zIndex: 0 }}
+            alt="Disc background"
+            className="absolute inset-0 w-full h-full object-cover"
+            style={{ zIndex: 0 }}
           />
 
-          {/* Inner disc shadow — MUST be UNDER the photos */}
+          {/* Inner disc shadow (UNDER images) */}
           <div
             className="absolute inset-0 rounded-full pointer-events-none"
             style={{
-              // subtle depth, but placed beneath collages
+              zIndex: 1,
               boxShadow: "inset 0 4px 12px rgba(0, 0, 0, 0.18)",
-              zIndex: 0.8,
             }}
           />
 
-          {/* Photos - positioned in top-right quadrant area */}
+          {/* Photos collage (top-right) */}
           <div
             className="absolute"
             style={{
@@ -59,24 +50,22 @@ const RotatingDisc = () => {
               width: "50%",
               height: "50%",
               pointerEvents: "none",
-              zIndex: 1,
+              zIndex: 2,
             }}
           >
             <img
               src={photosCollage}
-              alt="Photos"
+              alt="Photos collage"
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
-                objectPosition: "center center",
-                display: "block",
-                transform: "translate(-2.3rem, 2rem) scale(2.5)",
+                transform: "translate(-0.8rem, 11rem) scale(2.5)",
               }}
             />
           </div>
 
-          {/* About Me - positioned in bottom-right quadrant area */}
+          {/* About collage (bottom-right) */}
           <div
             className="absolute"
             style={{
@@ -85,26 +74,23 @@ const RotatingDisc = () => {
               width: "50%",
               height: "50%",
               pointerEvents: "none",
-              zIndex: 1,
+              zIndex: 2,
             }}
           >
             <img
               src={aboutCollage}
-              alt="About Me"
+              alt="About collage"
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
-                objectPosition: "center center",
-                display: "block",
-                transform: "translate(-0.85rem, -2.7rem) scale(2.5)",
+                transform: "translate(-0.9rem, -2.5rem) scale(2.5)",
               }}
             />
           </div>
 
-          {/* Quadrant divider lines */}
-          <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 2 }}>
-            {/* Horizontal line */}
+          {/* Divider lines (visual only) */}
+          <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 3 }}>
             <div
               className="absolute top-1/2 left-0 w-full h-[2px] -translate-y-1/2"
               style={{
@@ -112,7 +98,6 @@ const RotatingDisc = () => {
                   "linear-gradient(90deg, transparent 10%, hsl(var(--paper)) 30%, hsl(var(--paper)) 70%, transparent 90%)",
               }}
             />
-            {/* Vertical line */}
             <div
               className="absolute left-1/2 top-0 w-[2px] h-full -translate-x-1/2"
               style={{
@@ -122,39 +107,107 @@ const RotatingDisc = () => {
             />
           </div>
 
-          {/* Clickable quadrants */}
-          {quadrants.map((quadrant, index) => (
-            <button
-              key={quadrant.label}
-              onClick={() => navigate(quadrant.path)}
-              className="absolute w-1/2 h-1/2 group cursor-pointer transition-all duration-300 hover:bg-burgundy/20"
+          {/* PHOTOS BUTTON */}
+          <button
+            type="button"
+            onClick={() => navigate("/photos")}
+            onMouseEnter={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = photosHoverTransform;
+              img.style.filter = "drop-shadow(0 10px 16px rgba(0,0,0,0.35))";
+            }}
+            onMouseLeave={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = photosBaseTransform;
+              img.style.filter = "drop-shadow(0 0 0 rgba(0,0,0,0))";
+            }}
+            className="absolute group"
+            style={{
+              top: "42%",
+              left: "72%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 4,
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              lineHeight: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "7.5rem",
+              height: "7.5rem",
+              borderRadius: "9999px",
+            }}
+            aria-label="Go to Photos"
+          >
+            <img
+              src={photosTitle}
+              alt="Photos"
+              draggable={false}
+              className="transition-transform duration-300"
               style={{
-                top: index < 2 ? 0 : "50%",
-                left: index % 2 === 0 ? 0 : "50%",
-                zIndex: 3,
-                clipPath:
-                  index === 0
-                    ? "polygon(100% 0%, 0% 0%, 100% 100%)"
-                    : index === 1
-                    ? "polygon(0% 0%, 100% 0%, 0% 100%)"
-                    : index === 2
-                    ? "polygon(0% 0%, 100% 100%, 0% 100%)"
-                    : "polygon(100% 0%, 100% 100%, 0% 100%)",
+                filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
+                width: "14rem",
+                maxWidth: "42vw",
+                transform: photosBaseTransform,
+                transformOrigin: "center",
+                pointerEvents: "none",
               }}
-            >
-              <span
-                className="absolute font-handwritten text-paper text-lg md:text-xl lg:text-2xl font-bold drop-shadow-lg transition-transform duration-300 group-hover:scale-110"
-                style={{
-                  top: index < 2 ? "25%" : "55%",
-                  left: index % 2 === 0 ? "25%" : "55%",
-                  transform: "translate(-50%, -50%)",
-                  textShadow: "2px 2px 4px rgba(0,0,0,0.5)",
-                }}
-              >
-                {quadrant.label}
-              </span>
-            </button>
-          ))}
+            />
+          </button>
+
+          {/* ABOUT BUTTON */}
+          <button
+            type="button"
+            onClick={() => navigate("/about")}
+            onMouseEnter={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = "scale(1.48)";
+              img.style.filter = "drop-shadow(0 10px 16px rgba(0,0,0,0.35))";
+            }}
+            onMouseLeave={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = "scale(1.35)";
+              img.style.filter = "drop-shadow(0 0 0 rgba(0,0,0,0))";
+            }}
+            className="absolute group"
+            style={{
+              top: "65%",
+              left: "70%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 4,
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              lineHeight: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "7.5rem",
+              height: "7.5rem",
+              borderRadius: "9999px",
+            }}
+            aria-label="Go to About Me"
+          >
+            <img
+              src={aboutTitle}
+              alt="About Me"
+              draggable={false}
+              className="transition-transform duration-300"
+              style={{
+                filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
+                width: "15rem",
+                maxWidth: "46vw",
+                transform: "scale(1.35)",
+                transformOrigin: "center",
+                pointerEvents: "none",
+              }}
+            />
+          </button>
 
           {/* Center hole */}
           <div
