@@ -1,6 +1,14 @@
-import { useMemo, useRef } from "react";
-import { useFrame } from "@react-three/fiber";
+import { useEffect, useMemo, useRef } from "react";
+import { useFrame, useLoader } from "@react-three/fiber";
 import * as THREE from "three";
+import film1 from "@/assets/film1.JPG";
+import film2 from "@/assets/film2.JPG";
+import film3 from "@/assets/film3.JPG";
+import film4 from "@/assets/film4.JPG";
+import film5 from "@/assets/film5.JPG";
+import film6 from "@/assets/film6.JPG";
+import film7 from "@/assets/film7.JPG";
+import film8 from "@/assets/film8.JPG";
 
 const STRIP_WIDTH = 1.05;
 const SEGMENTS = 900;
@@ -37,6 +45,68 @@ export default function FilmStrip() {
   const meshRef = useRef<THREE.Mesh>(null);
   const offsetRef = useRef(0);
   const curve = useMemo(() => createSplinePath(), []);
+  const photoTextures = useLoader(THREE.TextureLoader, [
+    film1,
+    film2,
+    film3,
+    film4,
+    film5,
+    film6,
+    film7,
+    film8,
+  ]);
+
+  useEffect(() => {
+    photoTextures.forEach((texture) => {
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.wrapS = THREE.ClampToEdgeWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.needsUpdate = true;
+    });
+  }, [photoTextures]);
+
+  const atlasTexture = useMemo(() => {
+    const cols = 4;
+    const rows = 2;
+    const frameW = 512;
+    const frameH = 640;
+    const canvas = document.createElement("canvas");
+    canvas.width = cols * frameW;
+    canvas.height = rows * frameH;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return new THREE.Texture();
+
+    ctx.fillStyle = "#101010";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    photoTextures.forEach((texture, index) => {
+      const image = texture.image as CanvasImageSource & { width?: number; height?: number };
+      const iw = image.width ?? frameW;
+      const ih = image.height ?? frameH;
+      const scale = Math.max(frameW / iw, frameH / ih);
+      const sw = frameW / scale;
+      const sh = frameH / scale;
+      const sx = (iw - sw) * 0.5;
+      const sy = (ih - sh) * 0.5;
+
+      const col = index % cols;
+      const row = Math.floor(index / cols);
+      const dx = col * frameW;
+      const dy = row * frameH;
+      ctx.drawImage(image, sx, sy, sw, sh, dx, dy, frameW, frameH);
+    });
+
+    const atlas = new THREE.CanvasTexture(canvas);
+    atlas.colorSpace = THREE.SRGBColorSpace;
+    atlas.minFilter = THREE.LinearMipmapLinearFilter;
+    atlas.magFilter = THREE.LinearFilter;
+    atlas.wrapS = THREE.ClampToEdgeWrapping;
+    atlas.wrapT = THREE.ClampToEdgeWrapping;
+    atlas.needsUpdate = true;
+    return atlas;
+  }, [photoTextures]);
 
   const geometry = useMemo(() => {
     const geo = new THREE.BufferGeometry();
@@ -72,6 +142,10 @@ export default function FilmStrip() {
       new THREE.ShaderMaterial({
         uniforms: {
           uOffset: { value: 0 },
+          uPhotoAtlas: { value: atlasTexture },
+          uFrameCount: { value: 8 },
+          uAtlasCols: { value: 4 },
+          uAtlasRows: { value: 2 },
         },
         vertexShader: `
           varying vec2 vUv;
@@ -87,13 +161,15 @@ export default function FilmStrip() {
         `,
         fragmentShader: `
           uniform float uOffset;
+          uniform sampler2D uPhotoAtlas;
+          uniform float uFrameCount;
+          uniform float uAtlasCols;
+          uniform float uAtlasRows;
           varying vec2 vUv;
           varying vec3 vNormal;
           varying vec3 vWorldPos;
 
           void main() {
-            vec3 baseColor = vec3(0.08, 0.08, 0.08);
-
             float edgeDist = min(vUv.y, 1.0 - vUv.y);
             float stripU = vUv.x * 80.0 + uOffset * 10.0;
             float holePattern = step(0.3, fract(stripU)) * step(fract(stripU), 0.7);
@@ -103,19 +179,27 @@ export default function FilmStrip() {
             float grain = fract(sin(dot(vWorldPos.xz * 50.0, vec2(12.9898, 78.233))) * 43758.5453);
 
             vec3 lightDir = normalize(vec3(0.5, 1.0, 0.8));
-            float diffuse = max(dot(vNormal, lightDir), 0.0) * 0.6 + 0.4;
+            float diffuse = max(dot(vNormal, lightDir), 0.0) * 0.45 + 0.75;
 
             vec3 viewDir = normalize(cameraPosition - vWorldPos);
             vec3 halfDir = normalize(lightDir + viewDir);
             float spec = pow(max(dot(vNormal, halfDir), 0.0), 60.0) * 0.4;
 
-            vec3 frameColor = vec3(0.72, 0.72, 0.72);
-            float frameArea = step(0.15, edgeDist);
-            vec3 color = mix(baseColor, frameColor, frameArea * 0.5);
+            float frameU = stripU * 0.25;
+            float frameIdx = mod(floor(frameU), uFrameCount);
+            float col = mod(frameIdx, uAtlasCols);
+            float row = floor(frameIdx / uAtlasCols);
+            vec2 frameUv = vec2(fract(frameU), clamp((vUv.y - 0.15) / 0.7, 0.0, 1.0));
+            vec2 atlasUv = (vec2(col, row) + vec2(frameUv.x, frameUv.y)) / vec2(uAtlasCols, uAtlasRows);
+            vec3 photoColor = texture2D(uPhotoAtlas, atlasUv).rgb;
+            vec3 baseColor = vec3(0.08, 0.08, 0.08);
+            vec3 frameColor = min(photoColor * 1.24 + vec3(0.1), vec3(1.0));
+            float frameArea = smoothstep(0.12, 0.2, edgeDist);
+            vec3 color = mix(baseColor, frameColor, frameArea);
 
             color = mix(vec3(0.0), color, 1.0 - holeMask * 0.9);
             color += vec3(0.03) * frameLine;
-            color *= diffuse;
+            color *= mix(0.96, diffuse, 0.65);
             color += vec3(0.95, 0.95, 0.95) * spec;
             color += vec3(grain - 0.5) * 0.015;
 
