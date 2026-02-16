@@ -60,7 +60,7 @@ const RotatingDisc = () => {
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
-                transform: "translate(-0.8rem, 9.5rem) scale(2.5)",
+                transform: "translate(-0.8rem, 11rem) scale(2.5)",
               }}
             />
           </div>
