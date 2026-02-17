@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Scene from "@/components/Scene";
 import galleryTitle from "@/assets/gallery-title-cropped.png";
@@ -129,6 +129,20 @@ const Photos = () => {
       return next;
     });
   };
+
+  const assetMap = useMemo(() => {
+    const modules = import.meta.glob<string>("../assets/*.{jpg,JPG,jpeg,JPEG,png,PNG,svg,SVG}", {
+      eager: true,
+      import: "default",
+    });
+
+    const map = new Map<string, string>();
+    for (const [path, url] of Object.entries(modules)) {
+      const file = path.split("/").pop();
+      if (file) map.set(file, url);
+    }
+    return map;
+  }, []);
 
   return (
     <div className="min-h-screen bg-paper text-burgundy-dark">
