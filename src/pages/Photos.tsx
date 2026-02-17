@@ -191,15 +191,24 @@ const Photos = () => {
                   style={{ transform: flippedCards.has(item.id) ? "rotateY(180deg)" : "rotateY(0deg)" }}
                 >
                   <span className="absolute inset-0 overflow-hidden border border-burgundy-dark/20 bg-[linear-gradient(150deg,rgba(120,16,28,0.14),rgba(247,233,206,0.34))] shadow-[0_10px_24px_rgba(80,20,20,0.14)] [backface-visibility:hidden]">
-                    <img
-                      src={`/src/assets/${item.image}`}
-                      alt={item.alt}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
+                    {(() => {
+                      const imgSrc =
+                        assetMap.get(item.image) ||
+                        assetMap.get(item.image.toUpperCase()) ||
+                        "";
+
+                      return (
+                        <img
+                          src={imgSrc}
+                          alt={item.alt}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      );
+                    })()}
                   </span>
                   <span
                     className="absolute inset-0 flex items-center justify-center border border-burgundy-dark/20 bg-paper px-3 [backface-visibility:hidden]"
