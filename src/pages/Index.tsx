@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import TornPaper from "@/components/TornPaper";
 import NameTitle from "@/components/NameTitle";
 import RotatingDisc from "@/components/RotatingDisc";
@@ -38,6 +39,14 @@ const Index = () => {
           background: 'linear-gradient(90deg, transparent, hsl(37 55% 86% / 0.3), transparent)',
         }}
       />
+
+      {/* Temporary quick link while building the projects page */}
+      <Link
+        to="/projects"
+        className="absolute top-6 right-6 z-20 rounded-full border border-paper/40 bg-background/70 px-4 py-2 text-sm font-handwritten text-paper transition-colors hover:text-paper/80"
+      >
+        open projects
+      </Link>
     </div>
   );
 };
