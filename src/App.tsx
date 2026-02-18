@@ -9,6 +9,7 @@ import Experience from "./pages/Experience";
 import About from "./pages/About";
 import Photos from "./pages/Photos";
 import NotFound from "./pages/NotFound";
+import FloatingHearts from "./components/FloatingHearts";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <HashRouter>
+        <FloatingHearts />
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/projects" element={<Projects />} />
