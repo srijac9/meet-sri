@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import Scene from "@/components/Scene";
 import galleryTitle from "@/assets/gallery-title-cropped.png";
@@ -130,6 +130,20 @@ const Photos = () => {
     });
   };
 
+  const assetMap = useMemo(() => {
+    const modules = import.meta.glob<string>("../assets/*.{jpg,JPG,jpeg,JPEG,png,PNG,svg,SVG}", {
+      eager: true,
+      import: "default",
+    });
+
+    const map = new Map<string, string>();
+    for (const [path, url] of Object.entries(modules)) {
+      const file = path.split("/").pop();
+      if (file) map.set(file, url);
+    }
+    return map;
+  }, []);
+
   return (
     <div className="min-h-screen bg-paper text-burgundy-dark">
       <header className="relative z-20 h-[82vh] min-h-[520px] w-full overflow-visible">
@@ -177,15 +191,24 @@ const Photos = () => {
                   style={{ transform: flippedCards.has(item.id) ? "rotateY(180deg)" : "rotateY(0deg)" }}
                 >
                   <span className="absolute inset-0 overflow-hidden border border-burgundy-dark/20 bg-[linear-gradient(150deg,rgba(120,16,28,0.14),rgba(247,233,206,0.34))] shadow-[0_10px_24px_rgba(80,20,20,0.14)] [backface-visibility:hidden]">
-                    <img
-                      src={`/src/assets/${item.image}`}
-                      alt={item.alt}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                      onError={(e) => {
-                        e.currentTarget.style.display = "none";
-                      }}
-                    />
+                    {(() => {
+                      const imgSrc =
+                        assetMap.get(item.image) ||
+                        assetMap.get(item.image.toUpperCase()) ||
+                        "";
+
+                      return (
+                        <img
+                          src={imgSrc}
+                          alt={item.alt}
+                          className="h-full w-full object-cover"
+                          loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
+                        />
+                      );
+                    })()}
                   </span>
                   <span
                     className="absolute inset-0 flex items-center justify-center border border-burgundy-dark/20 bg-paper px-3 [backface-visibility:hidden]"

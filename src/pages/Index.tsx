@@ -1,52 +1,43 @@
 import { Link } from "react-router-dom";
 import TornPaper from "@/components/TornPaper";
 import NameTitle from "@/components/NameTitle";
+import { useCallback, useState } from "react";
 import RotatingDisc from "@/components/RotatingDisc";
-import FloatingHearts from "@/components/FloatingHearts";
+import MusicPlayer from "@/components/MusicPlayer";
+import HeroSection from "@/components/HeroSection";
 
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-background relative overflow-hidden">
-      {/* Torn paper on the left */}
-      <TornPaper />
-      
-      {/* Floating hearts decoration */}
-      <FloatingHearts />
-      
-      {/* Main content */}
-      <div className="relative z-10 min-h-screen flex flex-col md:flex-row items-center justify-center gap-8 md:gap-16 lg:gap-24 px-8 py-12">
-        {/* Left side - Name */}
-        <div className="md:ml-32 lg:ml-40">
-          <NameTitle />
-        </div>
-        
-        {/* Right side - Rotating disc */}
-        <div className="flex-shrink-0">
-          <RotatingDisc />
-        </div>
-      </div>
-      
-      {/* Decorative tape strips */}
-      <div 
-        className="absolute top-8 left-1/4 w-24 h-6 bg-paper/30 transform -rotate-12"
-        style={{ 
-          background: 'linear-gradient(90deg, transparent, hsl(37 55% 86% / 0.4), transparent)',
-        }}
-      />
-      <div 
-        className="absolute bottom-12 right-1/4 w-20 h-5 bg-paper/30 transform rotate-6"
-        style={{ 
-          background: 'linear-gradient(90deg, transparent, hsl(37 55% 86% / 0.3), transparent)',
-        }}
-      />
+  const [isPlaying, setIsPlaying] = useState(false);
 
-      {/* Temporary quick link while building the projects page */}
-      <Link
-        to="/projects"
-        className="absolute top-6 right-6 z-20 rounded-full border border-paper/40 bg-background/70 px-4 py-2 text-sm font-handwritten text-paper transition-colors hover:text-paper/80"
+  const togglePlay = useCallback(() => {
+    setIsPlaying((prev) => !prev);
+  }, []);
+
+  return (
+    <div className="bg-background">
+      <HeroSection />
+
+      <main
+        className="relative min-h-screen overflow-hidden"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, #7d1010 0%, #6e1414 45%, #5c0f10 100%)",
+        }}
       >
-        open projects
-      </Link>
+        <div
+          className="pointer-events-none absolute inset-0"
+          aria-hidden="true"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, transparent 50%, rgba(61,8,8,0.45) 100%)",
+          }}
+        />
+
+        <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-14 sm:gap-8">
+          <RotatingDisc isPlaying={isPlaying} onToggle={togglePlay} />
+          <MusicPlayer isPlaying={isPlaying} onToggle={togglePlay} />
+        </div>
+      </main>
     </div>
   );
 };
