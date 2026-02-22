@@ -282,6 +282,17 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
       >
         {isPlaying ? "click disc to pause" : "click disc to play"}
       </p>
+
+      {/* Temporary shortcut to Projects page */}
+      <div className="mt-4 flex justify-center">
+        <button
+          type="button"
+          onClick={() => navigate("/projects")}
+          className="rounded-full border border-paper/35 bg-[#5d1214]/65 px-4 py-2 font-handwritten text-lg text-paper transition-colors hover:bg-[#6b1e28]/75"
+        >
+          temp: view projects
+        </button>
+      </div>
     </div>
   );
 };

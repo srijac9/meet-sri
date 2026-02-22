@@ -1,7 +1,7 @@
 ﻿import React, { useRef, useEffect, useState, useCallback } from "react";
 
 /**
- * SubtleAudioBackdrop (circular, multi-peak â€œspectrum landscapeâ€)
+ * SubtleAudioBackdrop (circular, multi-peak “spectrum landscape”)
  * - Circular base (concentric rings + radial mesh)
  * - Multiple peaks (audio-driven gaussians) moving gently
  * - Creamy red palette (no neon)
@@ -18,7 +18,7 @@ const NUM_PEAKS = 12;
 const PEAK_SIGMA = 0.16;   // in normalized radius units (0..1-ish)
 const PEAK_MOVE_SPEED = 0.00027;
 
-const AUDIO_RESPONSE_BOOST = 2.2;
+const AUDIO_RESPONSE_BOOST = 2.0;
 const ENERGY_FLOOR = 0.08;
 
 const MAX_PEAK_HEIGHT = 78;
@@ -33,12 +33,13 @@ const PALETTE = [
   [245, 230, 218],
 ];
 
-// 3D â€œcameraâ€
+// 3D “camera”
 const TILT_X = 0.28;     // even more side-on perspective
 const ROT_Y = -0.06;     // reduce side skew
 const CAMERA_Z = 760;    // flatter view, less top-down distortion
 const SCALE = 1.0;
 const CANVAS_OVERSCAN_Y = 1.2; // small vertical overscan to reduce clipping at edges
+const BAR_PATTERN = [14, 18, 22, 28, 32, 26, 20, 18, 24, 30, 25, 20, 16, 21, 18, 22, 27, 22, 18, 16, 20, 24, 20, 16];
 
 function clamp01(x) {
   return Math.max(0, Math.min(1, x));
@@ -46,6 +47,14 @@ function clamp01(x) {
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const whole = Math.floor(seconds);
+  const mins = Math.floor(whole / 60);
+  const secs = String(whole % 60).padStart(2, "0");
+  return `${mins}:${secs}`;
 }
 
 function paletteColor(t) {
@@ -63,7 +72,7 @@ function paletteColor(t) {
   ];
 }
 
-// Subtle â€œcreamâ€ glow without neon: brighten toward palette end based on intensity.
+// Subtle “cream” glow without neon: brighten toward palette end based on intensity.
 function getStrokeRGB(depthT, intensity, alphaBoost = 0) {
   const base = paletteColor(depthT);
   const cream = paletteColor(0.95);
@@ -136,6 +145,8 @@ const SubtleAudioBackdrop = ({
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   /* =========================
      AUDIO SETUP
@@ -155,13 +166,22 @@ const SubtleAudioBackdrop = ({
     }
 
     const onCanPlay = () => setIsReady(true);
-    const onEnded = () => setIsPlaying(false);
+    const onLoadedMetadata = () => setDuration(audio.duration || 0);
+    const onTimeUpdate = () => setCurrentTime(audio.currentTime || 0);
+    const onEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
 
     audio.addEventListener("canplaythrough", onCanPlay);
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("timeupdate", onTimeUpdate);
     audio.addEventListener("ended", onEnded);
 
     return () => {
       audio.removeEventListener("canplaythrough", onCanPlay);
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("timeupdate", onTimeUpdate);
       audio.removeEventListener("ended", onEnded);
       audio.pause();
       audio.src = "";
@@ -203,6 +223,17 @@ const SubtleAudioBackdrop = ({
       setIsPlaying(true);
     }
   }, [isPlaying, initAudioContext]);
+
+  const jumpBy = useCallback(
+    (deltaSeconds) => {
+      if (!audioRef.current) return;
+      const maxTime = duration || audioRef.current.duration || 0;
+      const next = Math.max(0, Math.min(maxTime, (audioRef.current.currentTime || 0) + deltaSeconds));
+      audioRef.current.currentTime = next;
+      setCurrentTime(next);
+    },
+    [duration]
+  );
 
   /* =========================
      RENDER LOOP
@@ -306,7 +337,7 @@ const SubtleAudioBackdrop = ({
           y += (p.amp * dyn) * Math.pow(g, 1.0);
         }
 
-        // fade toward edge so the disc stays â€œcontainedâ€
+        // fade toward edge so the disc stays “contained”
         const edgeFade = Math.pow(1 - clamp01(r), 0.55);
         y *= 0.55 + edgeFade * 0.85;
         y = Math.max(-16, y);
@@ -325,7 +356,7 @@ const SubtleAudioBackdrop = ({
       );
 
       // Draw disc surface: concentric ring polylines
-      // (This gives the â€œcircular baseâ€ + many peaks look)
+      // (This gives the “circular base” + many peaks look)
       for (let ri = 0; ri < RINGS; ri++) {
         const rT = ri / (RINGS - 1);
         const rWorld = rT * discRadius;
@@ -366,7 +397,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Add a light radial mesh (sparingly) so it feels like a â€œgridâ€
+      // Add a light radial mesh (sparingly) so it feels like a “grid”
       const RADIALS = 18;
       for (let k = 0; k < RADIALS; k++) {
         const theta = (k / RADIALS) * Math.PI * 2;
@@ -400,7 +431,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Base rim (outer circle) for that â€œdisc edgeâ€
+      // Base rim (outer circle) for that “disc edge”
       {
         ctx.beginPath();
         const rimSteps = 220;
@@ -424,7 +455,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Tiny â€œsparkleâ€ dots to mimic the dotted surface feel (subtle, not neon)
+      // Tiny “sparkle” dots to mimic the dotted surface feel (subtle, not neon)
       {
         const dots = 260;
         for (let i = 0; i < dots; i++) {
@@ -465,6 +496,10 @@ const SubtleAudioBackdrop = ({
     if (autoStart && isReady) togglePlay();
   }, [autoStart, isReady, togglePlay]);
 
+  const progress = duration > 0 ? clamp01(currentTime / duration) : 0;
+  const currentLabel = formatTime(currentTime);
+  const durationLabel = formatTime(duration);
+
   return (
     <div
       ref={containerRef}
@@ -475,34 +510,99 @@ const SubtleAudioBackdrop = ({
     >
       <canvas ref={canvasRef} className="absolute left-0 pointer-events-none" />
 
-      {/* Overlay UI (matches your â€œNow Playingâ€ vibe) */}
-      <div className="relative z-10 flex h-full flex-col justify-between p-6">
-        <div className="pointer-events-none select-none">
-          <h2
-            className="text-3xl font-semibold text-white"
-            style={{ fontFamily: "cursive" }}
-          >
-            {title}
-          </h2>
-          <p className="mt-1 text-sm text-white/70">{subtitle}</p>
-        </div>
+      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 px-4 text-[#F5E6DA]">
+        <h2 className="pointer-events-none select-none text-2xl font-semibold leading-none" style={{ fontFamily: "cursive" }}>
+          {title}
+        </h2>
 
-        <div className="flex items-center justify-center">
-          <button
-            onClick={togglePlay}
-            className="h-14 w-14 rounded-full bg-[#F5E6DA] text-[#1A0A0B] flex items-center justify-center shadow-xl active:scale-95 transition"
-            aria-label={isPlaying ? "Pause" : "Play"}
-          >
-            <span className="text-lg font-semibold">
-              {isPlaying ? "II" : "â–¶"}
-            </span>
-          </button>
+        <div className="pointer-events-auto w-full max-w-[420px]">
+          <div className="mx-auto flex w-fit items-end justify-center gap-4 text-[#F5E6DA]">
+            <span className="w-14 text-right text-[30px] font-black leading-[0.9] tabular-nums md:text-[40px]">{currentLabel}</span>
+            <div className="flex h-[34px] items-end justify-center gap-[4px]">
+              {BAR_PATTERN.map((h, idx) => {
+                const active = idx / (BAR_PATTERN.length - 1) <= progress;
+                return (
+                  <div
+                    key={idx}
+                    className={`w-[4px] shrink-0 rounded-full ${active ? "bg-[#F5E6DA]" : "bg-[#F5E6DA]/35"}`}
+                    style={{ height: `${h}px` }}
+                  />
+                );
+              })}
+            </div>
+            <span className="w-14 text-left text-[30px] font-black leading-[0.9] tabular-nums md:text-[40px]">{durationLabel}</span>
+          </div>
+
+          <div className="mt-4 flex items-center justify-center gap-5">
+            <button
+              type="button"
+              className="grid h-8 w-8 place-items-center text-[#F5E6DA] transition-opacity hover:opacity-80"
+              aria-label="Expand"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
+                <path d="M4 20 L10 14" />
+                <path d="M6 14 H10 V18" />
+                <path d="M20 4 L14 10" />
+                <path d="M14 6 V10 H18" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => jumpBy(-10)}
+              className="grid h-8 w-8 place-items-center text-[#F5E6DA] transition-opacity hover:opacity-80"
+              aria-label="Back 10 seconds"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
+                <path d="M7 6 V18" />
+                <path d="M17 7 L10 12 L17 17 Z" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+            <button
+              onClick={togglePlay}
+              className="grid h-16 w-16 place-items-center rounded-full bg-[#F5E6DA] text-[#1A0A0B] active:scale-95 transition"
+              aria-label={isPlaying ? "Pause" : "Play"}
+            >
+              {isPlaying ? (
+                <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current">
+                  <rect x="6" y="5" width="4" height="14" rx="1" />
+                  <rect x="14" y="5" width="4" height="14" rx="1" />
+                </svg>
+              ) : (
+                <svg viewBox="0 0 24 24" className="h-6 w-6 fill-current">
+                  <path d="M8 6 L19 12 L8 18 Z" />
+                </svg>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={() => jumpBy(10)}
+              className="grid h-8 w-8 place-items-center text-[#F5E6DA] transition-opacity hover:opacity-80"
+              aria-label="Forward 10 seconds"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
+                <path d="M17 6 V18" />
+                <path d="M7 7 L14 12 L7 17 Z" fill="currentColor" stroke="none" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              className="grid h-8 w-8 place-items-center text-[#F5E6DA] transition-opacity hover:opacity-80"
+              aria-label="Shuffle"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.8]">
+                <path d="M3 7 H7 L17 17 H21" />
+                <path d="M17 7 H21 V11" />
+                <path d="M21 7 L16 12" />
+                <path d="M3 17 H7 L10 14" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
-
     </div>
   );
 };
 
 export default SubtleAudioBackdrop;
+
 
