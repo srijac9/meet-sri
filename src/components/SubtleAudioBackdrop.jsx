@@ -1,7 +1,8 @@
-﻿import React, { useRef, useEffect, useState, useCallback } from "react";
+import React, { useRef, useEffect, useState, useCallback } from "react";
+import { Pause, Play } from "lucide-react";
 
 /**
- * SubtleAudioBackdrop (circular, multi-peak â€œspectrum landscapeâ€)
+ * SubtleAudioBackdrop (circular, multi-peak “spectrum landscape”)
  * - Circular base (concentric rings + radial mesh)
  * - Multiple peaks (audio-driven gaussians) moving gently
  * - Creamy red palette (no neon)
@@ -18,7 +19,7 @@ const NUM_PEAKS = 12;
 const PEAK_SIGMA = 0.16;   // in normalized radius units (0..1-ish)
 const PEAK_MOVE_SPEED = 0.00027;
 
-const AUDIO_RESPONSE_BOOST = 2.2;
+const AUDIO_RESPONSE_BOOST = 2;
 const ENERGY_FLOOR = 0.08;
 
 const MAX_PEAK_HEIGHT = 78;
@@ -33,7 +34,7 @@ const PALETTE = [
   [245, 230, 218],
 ];
 
-// 3D â€œcameraâ€
+// 3D “camera”
 const TILT_X = 0.28;     // even more side-on perspective
 const ROT_Y = -0.06;     // reduce side skew
 const CAMERA_Z = 760;    // flatter view, less top-down distortion
@@ -63,7 +64,7 @@ function paletteColor(t) {
   ];
 }
 
-// Subtle â€œcreamâ€ glow without neon: brighten toward palette end based on intensity.
+// Subtle “cream” glow without neon: brighten toward palette end based on intensity.
 function getStrokeRGB(depthT, intensity, alphaBoost = 0) {
   const base = paletteColor(depthT);
   const cream = paletteColor(0.95);
@@ -106,6 +107,8 @@ const SubtleAudioBackdrop = ({
   file,
   title = "Now Playing",
   subtitle = "Add src/file to react with your track",
+  onPlaybackProgress,
+  controlsClassName = "",
   autoStart = false,
   height = 420,
 }) => {
@@ -136,6 +139,11 @@ const SubtleAudioBackdrop = ({
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const onPlaybackProgressRef = useRef(onPlaybackProgress);
+
+  useEffect(() => {
+    onPlaybackProgressRef.current = onPlaybackProgress;
+  }, [onPlaybackProgress]);
 
   /* =========================
      AUDIO SETUP
@@ -154,14 +162,36 @@ const SubtleAudioBackdrop = ({
       audio.src = src;
     }
 
-    const onCanPlay = () => setIsReady(true);
-    const onEnded = () => setIsPlaying(false);
+    const emitPlaybackProgress = () => {
+      const callback = onPlaybackProgressRef.current;
+      if (!callback) return;
+
+      callback({
+        currentTime: Number.isFinite(audio.currentTime) ? audio.currentTime : 0,
+        duration: Number.isFinite(audio.duration) ? audio.duration : 0,
+      });
+    };
+
+    const onCanPlay = () => {
+      setIsReady(true);
+      emitPlaybackProgress();
+    };
+    const onEnded = () => {
+      setIsPlaying(false);
+      emitPlaybackProgress();
+    };
 
     audio.addEventListener("canplaythrough", onCanPlay);
+    audio.addEventListener("loadedmetadata", emitPlaybackProgress);
+    audio.addEventListener("durationchange", emitPlaybackProgress);
+    audio.addEventListener("timeupdate", emitPlaybackProgress);
     audio.addEventListener("ended", onEnded);
 
     return () => {
       audio.removeEventListener("canplaythrough", onCanPlay);
+      audio.removeEventListener("loadedmetadata", emitPlaybackProgress);
+      audio.removeEventListener("durationchange", emitPlaybackProgress);
+      audio.removeEventListener("timeupdate", emitPlaybackProgress);
       audio.removeEventListener("ended", onEnded);
       audio.pause();
       audio.src = "";
@@ -306,7 +336,7 @@ const SubtleAudioBackdrop = ({
           y += (p.amp * dyn) * Math.pow(g, 1.0);
         }
 
-        // fade toward edge so the disc stays â€œcontainedâ€
+        // fade toward edge so the disc stays “contained”
         const edgeFade = Math.pow(1 - clamp01(r), 0.55);
         y *= 0.55 + edgeFade * 0.85;
         y = Math.max(-16, y);
@@ -325,7 +355,7 @@ const SubtleAudioBackdrop = ({
       );
 
       // Draw disc surface: concentric ring polylines
-      // (This gives the â€œcircular baseâ€ + many peaks look)
+      // (This gives the “circular base” + many peaks look)
       for (let ri = 0; ri < RINGS; ri++) {
         const rT = ri / (RINGS - 1);
         const rWorld = rT * discRadius;
@@ -366,7 +396,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Add a light radial mesh (sparingly) so it feels like a â€œgridâ€
+      // Add a light radial mesh (sparingly) so it feels like a “grid”
       const RADIALS = 18;
       for (let k = 0; k < RADIALS; k++) {
         const theta = (k / RADIALS) * Math.PI * 2;
@@ -400,7 +430,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Base rim (outer circle) for that â€œdisc edgeâ€
+      // Base rim (outer circle) for that “disc edge”
       {
         ctx.beginPath();
         const rimSteps = 220;
@@ -424,7 +454,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Tiny â€œsparkleâ€ dots to mimic the dotted surface feel (subtle, not neon)
+      // Tiny “sparkle” dots to mimic the dotted surface feel (subtle, not neon)
       {
         const dots = 260;
         for (let i = 0; i < dots; i++) {
@@ -475,27 +505,27 @@ const SubtleAudioBackdrop = ({
     >
       <canvas ref={canvasRef} className="absolute left-0 pointer-events-none" />
 
-      {/* Overlay UI (matches your â€œNow Playingâ€ vibe) */}
+      {/* Overlay UI (matches your “Now Playing” vibe) */}
       <div className="relative z-10 flex h-full flex-col justify-between p-6">
         <div className="pointer-events-none select-none">
-          <h2
-            className="text-3xl font-semibold text-white"
-            style={{ fontFamily: "cursive" }}
-          >
-            {title}
-          </h2>
-          <p className="mt-1 text-sm text-white/70">{subtitle}</p>
+          {title ? (
+            <h2
+              className="text-3xl font-semibold text-white"
+              style={{ fontFamily: "cursive" }}
+            >
+              {title}
+            </h2>
+          ) : null}
+          {subtitle ? <p className="mt-1 text-sm text-white/70">{subtitle}</p> : null}
         </div>
 
-        <div className="flex items-center justify-center">
+        <div className={`flex items-center justify-center ${controlsClassName}`.trim()}>
           <button
             onClick={togglePlay}
             className="h-14 w-14 rounded-full bg-[#F5E6DA] text-[#1A0A0B] flex items-center justify-center shadow-xl active:scale-95 transition"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
-            <span className="text-lg font-semibold">
-              {isPlaying ? "II" : "â–¶"}
-            </span>
+            {isPlaying ? <Pause size={20} strokeWidth={2.3} /> : <Play size={20} strokeWidth={2.3} className="ml-0.5" />}
           </button>
         </div>
       </div>
@@ -505,4 +535,3 @@ const SubtleAudioBackdrop = ({
 };
 
 export default SubtleAudioBackdrop;
-
