@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+import TornPaper from "@/components/TornPaper";
+import NameTitle from "@/components/NameTitle";
 import { useCallback, useState } from "react";
 import RotatingDisc from "@/components/RotatingDisc";
 import MusicPlayer from "@/components/MusicPlayer";
