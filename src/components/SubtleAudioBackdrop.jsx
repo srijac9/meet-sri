@@ -1,4 +1,5 @@
 ﻿import React, { useRef, useEffect, useState, useCallback } from "react";
+import { Pause, Play } from "lucide-react";
 
 /**
  * SubtleAudioBackdrop (circular, multi-peak “spectrum landscape”)
@@ -115,6 +116,8 @@ const SubtleAudioBackdrop = ({
   file,
   title = "Now Playing",
   subtitle = "Add src/file to react with your track",
+  onPlaybackProgress,
+  controlsClassName = "",
   autoStart = false,
   height = 420,
 }) => {
@@ -147,6 +150,11 @@ const SubtleAudioBackdrop = ({
   const [isReady, setIsReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const onPlaybackProgressRef = useRef(onPlaybackProgress);
+
+  useEffect(() => {
+    onPlaybackProgressRef.current = onPlaybackProgress;
+  }, [onPlaybackProgress]);
 
   /* =========================
      AUDIO SETUP
