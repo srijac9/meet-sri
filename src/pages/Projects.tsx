@@ -15,14 +15,78 @@ import projectsHeader from "@/assets/projects-portfolio.png";
 import favouriteSong from "@/assets/favourite-song.mp3";
 
 const projectItems = [
-  { title: "Portfolio Site", subtitle: "React - Tailwind", imageUrl: p1 },
-  { title: "Photo Journal", subtitle: "Three.js - Shader", imageUrl: p2 },
-  { title: "Music Visualizer", subtitle: "Canvas - Audio API", imageUrl: p3 },
-  { title: "Task Flow", subtitle: "TypeScript - UX", imageUrl: p4 },
-  { title: "Weather Board", subtitle: "API - Components", imageUrl: p5 },
-  { title: "Campus Map", subtitle: "Data Viz - UI", imageUrl: p6 },
-  { title: "Movie Finder", subtitle: "Search - Filters", imageUrl: p9 },
-  { title: "Recipe Lab", subtitle: "State - Design", imageUrl: p10 },
+  {
+    title: "Portfolio Site",
+    subtitle: "React - Tailwind",
+    description:
+      "A responsive landing page with smooth scroll animations and a dreamy visual direction.",
+    imageUrl: p1,
+    hasVideo: true,
+    liveUrl: "#",
+  },
+  {
+    title: "Photo Journal",
+    subtitle: "Three.js - Shader",
+    description:
+      "An interactive gallery experiment with depth, motion, and custom visual effects.",
+    imageUrl: p2,
+    hasVideo: true,
+    liveUrl: "#",
+  },
+  {
+    title: "Music Visualizer",
+    subtitle: "Canvas - Audio API",
+    description:
+      "A generative audio-reactive canvas that transforms sound into animated scenes.",
+    imageUrl: p3,
+    hasVideo: false,
+    liveUrl: "#",
+  },
+  {
+    title: "Task Flow",
+    subtitle: "TypeScript - UX",
+    description:
+      "A clean productivity interface focused on flow, organization, and accessible interactions.",
+    imageUrl: p4,
+    hasVideo: true,
+    liveUrl: "#",
+  },
+  {
+    title: "Weather Board",
+    subtitle: "API - Components",
+    description:
+      "A modular weather dashboard with component-driven layouts and quick city switching.",
+    imageUrl: p5,
+    hasVideo: false,
+    liveUrl: "#",
+  },
+  {
+    title: "Campus Map",
+    subtitle: "Data Viz - UI",
+    description:
+      "A map-based campus explorer with layered data views and easy route highlighting.",
+    imageUrl: p6,
+    hasVideo: true,
+    liveUrl: "#",
+  },
+  {
+    title: "Movie Finder",
+    subtitle: "Search - Filters",
+    description:
+      "A discovery app with fast search, smart filtering, and polished recommendation cards.",
+    imageUrl: p9,
+    hasVideo: true,
+    liveUrl: "#",
+  },
+  {
+    title: "Recipe Lab",
+    subtitle: "State - Design",
+    description:
+      "A playful recipe experience blending state-driven flows with warm visual styling.",
+    imageUrl: p10,
+    hasVideo: false,
+    liveUrl: "#",
+  },
 ];
 
 const SONG_NAME = "Favorite Song";
@@ -36,6 +100,7 @@ const formatTime = (seconds: number) => {
 
 const Projects = () => {
   const [playback, setPlayback] = useState({ currentTime: 0, duration: 0 });
+  const [activeFilter, setActiveFilter] = useState("all");
 
   const handlePlaybackProgress = useCallback(
     ({ currentTime, duration }: { currentTime: number; duration: number }) => {
@@ -55,8 +120,27 @@ const Projects = () => {
     return formatTime(remaining);
   }, [playback.currentTime, playback.duration]);
 
+  const filters = useMemo(
+    () => ["all", ...Array.from(new Set(projectItems.map((item) => item.subtitle.split(" - ")[0])))],
+    []
+  );
+
+  const filteredProjects = useMemo(
+    () =>
+      activeFilter === "all"
+        ? projectItems
+        : projectItems.filter((item) => item.subtitle.startsWith(activeFilter)),
+    [activeFilter]
+  );
+
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-background">
+    <div
+      className="relative min-h-screen overflow-x-hidden"
+      style={{
+        background:
+          "linear-gradient(180deg, #4b090f 0%, #5a0d13 34%, var(--background) 72%, var(--background) 100%)",
+      }}
+    >
       <FloatingHearts />
 
       <div className="relative z-10 min-h-screen py-12">
@@ -161,16 +245,43 @@ const Projects = () => {
           </div>
         </div>
 
-        <div className="mt-20 w-full px-4">
-          <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {projectItems.map((project) => (
-              <MusicPlayerCard
-                key={project.title}
-                title={project.title}
-                subtitle={project.subtitle}
-                imageUrl={project.imageUrl}
-              />
-            ))}
+        <div className="mt-24 w-full px-4">
+          <div className="w-full">
+            <div
+              className="mb-5 h-px w-full bg-gradient-to-r from-transparent via-paper/35 to-transparent"
+              aria-hidden="true"
+            />
+            <nav
+              className="mb-6 flex flex-wrap gap-2 sm:pl-[max(0px,calc((((100%-1.5rem)/2)-24rem)/2))] lg:pl-[max(0px,calc((((100%-4.5rem)/4)-24rem)/2))]"
+              aria-label="Project filters"
+            >
+              {filters.map((filter) => (
+                <button
+                  key={filter}
+                  onClick={() => setActiveFilter(filter)}
+                  className={`rounded-full px-4 py-1.5 font-handwritten text-base transition-all duration-300 ${
+                    activeFilter === filter
+                      ? "bg-[#6b1e28] text-[#f5e6d3] shadow-md"
+                      : "bg-[#f5e6d3]/10 text-[#c4a882] hover:bg-[#f5e6d3]/20 hover:text-[#f5e6d3]"
+                  }`}
+                >
+                  {filter}
+                </button>
+              ))}
+            </nav>
+            <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {filteredProjects.map((project) => (
+                <MusicPlayerCard
+                  key={project.title}
+                  title={project.title}
+                  subtitle={project.subtitle}
+                  description={project.description}
+                  imageUrl={project.imageUrl}
+                  hasVideo={project.hasVideo}
+                  liveUrl={project.liveUrl}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
