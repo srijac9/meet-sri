@@ -89,7 +89,15 @@ const projectItems = [
   },
 ];
 
-const SONG_NAME = "Favorite Song";
+const TRACK_TITLE = "Voices of Eternity";
+const ARTIST_NAME = "Yuri Megis";
+const LICENSE_NAME = "Licensing: CC BY 4.0";
+const LICENSE_URL = "https://creativecommons.org/licenses/by/4.0/";
+const NO_CHANGES_NOTE = "No changes made";
+const COPYRIGHT_NOTICE = "Copyright: © Yuri Megis";
+const DISCLAIMER_NOTICE = "Disclaimer: No warranties given.";
+const SOURCE_LABEL = "Source material";
+const SOURCE_URL = "https://freemusicarchive.org/music/ura-megis/single/voices-of-eternity-3/";
 
 const formatTime = (seconds: number) => {
   const safeSeconds = Math.max(0, Math.floor(seconds));
@@ -169,16 +177,16 @@ const Projects = () => {
                 autoStart={false}
                 height={360}
               />
-              <div className="pointer-events-none absolute -left-16 top-[42%] z-20 sm:-left-12">
+              <div className="pointer-events-none absolute -left-20 top-[42%] z-20 sm:-left-12">
                 <p
                   className="max-w-[420px] text-center text-[24px] font-light leading-relaxed tracking-wider sm:text-[30px]"
                   style={{ color: "rgba(255, 255, 255, 0.94)" }}
                 >
-                  <span>Favourite song of</span>
-                  <span className="block">the month</span>
+                  <span>Cool song find</span>
+                  <span className="block">of the month</span>
                 </p>
                 <svg
-                  className="absolute left-[90%] top-[88%] z-30 hidden h-[64px] w-[88px] -translate-y-1/2 -rotate-12 sm:block"
+                  className="absolute left-[110%] top-[86%] z-30 hidden h-[64px] w-[88px] -translate-y-1/2 -rotate-12 sm:block"
                   width="88"
                   height="64"
                   viewBox="0 0 88 64"
@@ -206,18 +214,28 @@ const Projects = () => {
               <div className="pointer-events-none absolute inset-x-8 top-[67%] z-20 -translate-y-1/2 sm:inset-x-10">
                 <div className="mx-auto w-[78%] max-w-[36rem] sm:translate-x-8">
                   <div className="mb-1 flex items-center justify-between gap-4">
-                    <p
-                      className="mb-1 text-[11px] font-light uppercase tracking-[0.4em] sm:text-xs"
-                      style={{ color: "rgba(245, 230, 218, 0.74)" }}
-                    >
-                      {SONG_NAME}
-                    </p>
-                    <p
-                      className="mb-1 text-[11px] font-light uppercase tracking-[0.4em] sm:text-xs"
-                      style={{ color: "rgba(245, 230, 218, 0.74)" }}
-                    >
-                      {timeDisplay}
-                    </p>
+                    <div className="flex flex-col">
+                      <p
+                        className="mb-1 text-[12px] font-light uppercase tracking-[0.4em] sm:text-[13px]"
+                        style={{ color: "rgba(245, 230, 218, 0.74)" }}
+                      >
+                        {TRACK_TITLE}
+                      </p>
+                      <p
+                        className="text-[11px] font-light tracking-[0.2em] sm:text-[12px]"
+                        style={{ color: "rgba(245, 230, 218, 0.72)" }}
+                      >
+                        {ARTIST_NAME}
+                      </p>
+                    </div>
+                    <div className="flex items-end">
+                      <p
+                        className="mb-1 text-[12px] font-light uppercase tracking-[0.4em] sm:text-[13px]"
+                        style={{ color: "rgba(245, 230, 218, 0.74)" }}
+                      >
+                        {timeDisplay}
+                      </p>
+                    </div>
                   </div>
                   <div
                     className="relative h-[2px] w-full rounded-full"
@@ -238,6 +256,48 @@ const Projects = () => {
                         backgroundColor: "rgba(245, 230, 218, 0.9)",
                       }}
                     />
+                  </div>
+                  <div className="mt-2 flex justify-end">
+                    <div className="flex flex-col items-end gap-0.5">
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={LICENSE_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="pointer-events-auto text-[14px] underline underline-offset-2 transition-opacity hover:opacity-80 sm:text-[15px]"
+                          style={{ color: "rgba(245, 230, 218, 0.82)" }}
+                        >
+                          {LICENSE_NAME}
+                        </a>
+                        <p
+                          className="text-[13px] sm:text-[14px]"
+                          style={{ color: "rgba(245, 230, 218, 0.72)" }}
+                        >
+                          {NO_CHANGES_NOTE}
+                        </p>
+                        <p
+                          className="text-[13px] sm:text-[14px]"
+                          style={{ color: "rgba(245, 230, 218, 0.68)" }}
+                        >
+                          {DISCLAIMER_NOTICE}
+                        </p>
+                        <a
+                          href={SOURCE_URL}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="pointer-events-auto text-[13px] underline underline-offset-2 transition-opacity hover:opacity-80 sm:text-[14px]"
+                          style={{ color: "rgba(245, 230, 218, 0.82)" }}
+                        >
+                          {SOURCE_LABEL}
+                        </a>
+                      </div>
+                      <p
+                        className="text-[12px] sm:text-[13px]"
+                        style={{ color: "rgba(245, 230, 218, 0.72)" }}
+                      >
+                        {COPYRIGHT_NOTICE}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -290,3 +350,4 @@ const Projects = () => {
 };
 
 export default Projects;
+
