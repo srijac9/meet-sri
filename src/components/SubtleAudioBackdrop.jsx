@@ -2,7 +2,7 @@
 import { Pause, Play } from "lucide-react";
 
 /**
- * SubtleAudioBackdrop (circular, multi-peak “spectrum landscape”)
+ * SubtleAudioBackdrop (circular, multi-peak �spectrum landscape�)
  * - Circular base (concentric rings + radial mesh)
  * - Multiple peaks (audio-driven gaussians) moving gently
  * - Creamy red palette (no neon)
@@ -19,10 +19,11 @@ const NUM_PEAKS = 12;
 const PEAK_SIGMA = 0.16;   // in normalized radius units (0..1-ish)
 const PEAK_MOVE_SPEED = 0.00027;
 
-const AUDIO_RESPONSE_BOOST = 2.0;
+const AUDIO_RESPONSE_BOOST = 1.8;
 const ENERGY_FLOOR = 0.08;
 
 const MAX_PEAK_HEIGHT = 78;
+const SOFT_PEAK_CAP = 200;
 const BASE_RIPPLE = 6;
 
 // Creamy reds (dark -> light)
@@ -34,7 +35,7 @@ const PALETTE = [
   [245, 230, 218],
 ];
 
-// 3D “camera”
+// 3D �camera�
 const TILT_X = 0.28;     // even more side-on perspective
 const ROT_Y = -0.06;     // reduce side skew
 const CAMERA_Z = 760;    // flatter view, less top-down distortion
@@ -73,7 +74,7 @@ function paletteColor(t) {
   ];
 }
 
-// Subtle “cream” glow without neon: brighten toward palette end based on intensity.
+// Subtle �cream� glow without neon: brighten toward palette end based on intensity.
 function getStrokeRGB(depthT, intensity, alphaBoost = 0) {
   const base = paletteColor(depthT);
   const cream = paletteColor(0.95);
@@ -300,12 +301,27 @@ const SubtleAudioBackdrop = ({
       const peaks = peaksRef.current;
       const time = tMs * 0.001;
 
-      for (const p of peaks) {
+      for (let i = 0; i < peaks.length; i++) {
+        const p = peaks[i];
         const idx = Math.min(p.freqBin, smoothed.length - 1);
-        const binSmoothed = smoothed[idx] / 255;
+        const left = smoothed[Math.max(0, idx - 1)] / 255;
+        const center = smoothed[idx] / 255;
+        const right = smoothed[Math.min(smoothed.length - 1, idx + 1)] / 255;
+        const binLocal = (left + center + right) / 3;
         const binRaw = dataArray[idx] / 255;
-        const bin = Math.max(binSmoothed, binRaw * 0.72);
-        p.amp += (bin * AUDIO_RESPONSE_BOOST - p.amp) * 0.14;
+        p._bin = Math.max(binLocal, binRaw * 0.72);
+      }
+
+      const avgPeakBin =
+        peaks.reduce((sum, p) => sum + (p._bin || 0), 0) / Math.max(1, peaks.length);
+
+      for (const p of peaks) {
+        const balancedBin = lerp(p._bin || 0, avgPeakBin, 0.35);
+        const targetAmp = Math.min(
+          1.05,
+          Math.pow(balancedBin * AUDIO_RESPONSE_BOOST + energy * 0.15, 0.82)
+        );
+        p.amp += (targetAmp - p.amp) * 0.18;
 
         // drift + slight orbit wobble
         p.px += p.vx + Math.sin(time * 0.65 + p.freqBin) * PEAK_MOVE_SPEED * 0.2;
@@ -342,10 +358,16 @@ const SubtleAudioBackdrop = ({
           const dist2 = dx * dx + dz * dz;
           const g = Math.exp(-dist2 / (2 * PEAK_SIGMA * PEAK_SIGMA));
           // soften spike tops a bit
-          y += (p.amp * dyn) * Math.pow(g, 1.0);
+          const ampCompressed = Math.pow(Math.min(1.1, p.amp), 0.82);
+          y += ampCompressed * dyn * g;
         }
 
-        // fade toward edge so the disc stays “contained”
+        // Soft-limit tall peaks so they do not shoot too far up.
+        if (y > 0) {
+          y = SOFT_PEAK_CAP * Math.tanh(y / SOFT_PEAK_CAP);
+        }
+
+        // fade toward edge so the disc stays contained
         const edgeFade = Math.pow(1 - clamp01(r), 0.55);
         y *= 0.55 + edgeFade * 0.85;
         y = Math.max(-16, y);
@@ -364,7 +386,7 @@ const SubtleAudioBackdrop = ({
       );
 
       // Draw disc surface: concentric ring polylines
-      // (This gives the “circular base” + many peaks look)
+      // (This gives the �circular base� + many peaks look)
       for (let ri = 0; ri < RINGS; ri++) {
         const rT = ri / (RINGS - 1);
         const rWorld = rT * discRadius;
@@ -405,7 +427,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Add a light radial mesh (sparingly) so it feels like a “grid”
+      // Add a light radial mesh (sparingly) so it feels like a �grid�
       const RADIALS = 18;
       for (let k = 0; k < RADIALS; k++) {
         const theta = (k / RADIALS) * Math.PI * 2;
@@ -439,7 +461,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Base rim (outer circle) for that “disc edge”
+      // Base rim (outer circle) for that �disc edge�
       {
         ctx.beginPath();
         const rimSteps = 220;
@@ -463,7 +485,7 @@ const SubtleAudioBackdrop = ({
         ctx.stroke();
       }
 
-      // Tiny “sparkle” dots to mimic the dotted surface feel (subtle, not neon)
+      // Tiny �sparkle� dots to mimic the dotted surface feel (subtle, not neon)
       {
         const dots = 260;
         for (let i = 0; i < dots; i++) {
@@ -518,10 +540,19 @@ const SubtleAudioBackdrop = ({
     >
       <canvas ref={canvasRef} className="absolute left-0 pointer-events-none" />
 
-      <div className="relative z-10 flex h-full flex-col items-center justify-center gap-4 px-4 text-[#F5E6DA]">
-        <h2 className="pointer-events-none select-none text-2xl font-semibold leading-none" style={{ fontFamily: "cursive" }}>
-          {title}
-        </h2>
+      {/* Overlay UI (matches your �Now Playing� vibe) */}
+      <div className="relative z-10 flex h-full flex-col justify-between p-6">
+        <div className="pointer-events-none select-none">
+          {title ? (
+            <h2
+              className="text-3xl font-semibold text-white"
+              style={{ fontFamily: "cursive" }}
+            >
+              {title}
+            </h2>
+          ) : null}
+          {subtitle ? <p className="mt-1 text-sm text-white/70">{subtitle}</p> : null}
+        </div>
 
         <div className="pointer-events-auto w-full max-w-[420px]">
           <div className="mx-auto flex w-fit items-end justify-center gap-4 text-[#F5E6DA]">
@@ -612,5 +643,4 @@ const SubtleAudioBackdrop = ({
 };
 
 export default SubtleAudioBackdrop;
-
 
