@@ -32,9 +32,8 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
         className="relative w-72 h-72 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] rounded-full p-2"
         style={{
           background:
-            "linear-gradient(135deg, hsl(37 55% 90%) 0%, hsl(37 50% 88%) 50%, hsl(37 55% 92%) 100%)",
-          boxShadow:
-            "0 12px 48px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.3)",
+            "linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 50%, #262626 100%)",
+          boxShadow: "0 12px 48px rgba(0, 0, 0, 0.45)",
         }}
       >
         {/* Inner rotating disc */}
@@ -42,7 +41,7 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
           className={`w-full h-full rounded-full overflow-hidden relative ${isPlaying ? "animate-spin-slow" : ""}`}
           style={{
             background:
-              "radial-gradient(circle at 50% 50%, #3D0A0A 0%, #3D0A0A 12%, transparent 12.5%), radial-gradient(circle at 50% 50%, transparent 12.5%, #5A1010 13%, #6E1414 22%, #8B2020 30%, #7A1A1A 45%, #6E1414 55%, #8B2020 70%, #A94442 85%, #D4B896 95%, #F3E5D0 100%)",
+              "radial-gradient(circle at 50% 50%, #3D0A0A 0%, #3D0A0A 12%, transparent 12.5%), radial-gradient(circle at 50% 50%, transparent 12.5%, #5A1010 13%, #6E1414 22%, #8B2020 30%, #7A1A1A 45%, #6E1414 55%, #8B2020 70%, #A94442 85%, #171717 95%, #080808 100%)",
           }}
         >
           {/* Disc background */}
@@ -255,9 +254,9 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
               top: "50%",
               left: "50%",
               background:
-                "linear-gradient(135deg, hsl(37 55% 90%) 0%, hsl(37 50% 88%) 50%, hsl(37 55% 92%) 100%)",
+                "linear-gradient(135deg, #1b1b1b 0%, #0b0b0b 50%, #202020 100%)",
               boxShadow:
-                "0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.5)",
+                "0 2px 10px rgba(0, 0, 0, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.12)",
             }}
           />
 

@@ -36,6 +36,12 @@ const Index = () => {
         <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-14 sm:gap-8">
           <RotatingDisc isPlaying={isPlaying} onToggle={togglePlay} />
           <MusicPlayer isPlaying={isPlaying} onToggle={togglePlay} />
+          <Link
+            to="/about"
+            className="rounded-full border border-paper/50 bg-background/70 px-4 py-2 text-sm font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
+          >
+            temporary: about me
+          </Link>
         </div>
       </main>
     </div>
