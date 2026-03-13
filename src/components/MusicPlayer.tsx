@@ -100,7 +100,7 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
         </div>
 
         <div className="flex items-center justify-center gap-6">
-          <button className="text-paper/60 transition-colors hover:text-paper" aria-label="Previous track">
+          <button className="text-paper/60" aria-label="Previous track">
             <SkipBack size={18} />
           </button>
 
@@ -120,7 +120,7 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
             )}
           </button>
 
-          <button className="text-paper/60 transition-colors hover:text-paper" aria-label="Next track">
+          <button className="text-paper/60" aria-label="Next track">
             <SkipForward size={18} />
           </button>
         </div>
