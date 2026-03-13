@@ -4,88 +4,80 @@ import FloatingHearts from "@/components/FloatingHearts";
 import MusicPlayerCard from "@/components/MusicPlayerCard";
 import SubtleAudioBackdrop from "@/components/SubtleAudioBackdrop";
 import p1 from "@/assets/p1.jpg";
-import p2 from "@/assets/p2.jpg";
-import p3 from "@/assets/p3.jpg";
-import p4 from "@/assets/p4.jpg";
-import p5 from "@/assets/p5.jpg";
-import p6 from "@/assets/p6.jpg";
-import p9 from "@/assets/p9.jpg";
-import p10 from "@/assets/p10.jpg";
+import breadboardImage from "@/assets/breadboard.png";
+import dermacareImage from "@/assets/dermacare.png";
+import footprintImage from "@/assets/footprint.png";
+import iClickImage from "@/assets/iclick.png";
+import irrigationSystemImage from "@/assets/irrigationsystem.png";
+import recipeFinderImage from "@/assets/recipefinder.png";
 import projectsHeader from "@/assets/projects-portfolio.png";
 import favouriteSong from "@/assets/favourite-song.mp3";
 
 const projectItems = [
   {
-    title: "Portfolio Site",
-    subtitle: "React - Tailwind",
+    title: "iClick",
+    tags: ["Python", "Computer Vision", "Machine Learning"],
     description:
-      "A responsive landing page with smooth scroll animations and a dreamy visual direction.",
+      "An accessibility app that enables hands-free computer navigation using eye tracking, blink gestures, and voice input.",
+    imageUrl: iClickImage,
+    hasVideo: false,
+    liveUrl: "https://devpost.com/software/iclick-4rynjv",
+  },
+  {
+    title: "BREAD.board",
+    tags: ["Python", "TypeScript", "LLM", "Livekit"],
+    description:
+      "An interactive learning tool that uses a live camera feed and real-time voice guidance to help users build circuits on a breadboard step by step.",
+    imageUrl: breadboardImage,
+    hasVideo: false,
+    liveUrl: "https://devpost.com/software/circuit-build",
+  },
+  {
+    title: "foot.print",
+    tags: ["Python", "Blender", "LLM", "Computer Vision"],
+    description:
+      "An AI tool that redesigns your room using Feng Shui principles and generates a 3D layout from a video scan.",
+    imageUrl: footprintImage,
+    hasVideo: true,
+    videoUrl: "https://youtu.be/GHOyehbWS0U",
+    liveUrl: "https://devpost.com/software/foot-print",
+  },
+  {
+    title: "DermaCare",
+    tags: ["Python", "Quagga.js", "LLM", "Web-scraping"],
+    description:
+      "A skincare app that scans and analyzes product ingredients and provides AI-powered recommendations based on your skin type.",
+    imageUrl: dermacareImage,
+    hasVideo: true,
+    videoUrl: "https://youtu.be/j2ykAA4lfdY",
+    liveUrl: "https://devpost.com/software/secret-project-m6s25w",
+  },
+  {
+    title: "Soil Irrigation System",
+    tags: ["Hardware", "C", "Microcontrollers"],
+    description:
+      "A microcontroller-based irrigation system that monitors soil moisture and automatically waters plants when needed.",
+    imageUrl: irrigationSystemImage,
+    hasVideo: false,
+    liveUrl: "https://github.com/srijac9/Soil-Irrigation-System",
+  },
+  {
+    title: "Recipe Finder",
+    tags: ["Python", "Web-scraping"],
+    description:
+      "A web app that finds recipes based on the user's cravings and desired ingredients.",
+    imageUrl: recipeFinderImage,
+    hasVideo: false,
+    liveUrl: "https://devpost.com/software/recipe-finder-xed0oz",
+  },
+  {
+    title: "meet sri",
+    tags: ["TypeScript", "Javascript", "CSS"],
+    description:
+      "My personal website for sharing my projects, experiences, and photos.",
     imageUrl: p1,
-    hasVideo: true,
-    liveUrl: "#",
-  },
-  {
-    title: "Photo Journal",
-    subtitle: "Three.js - Shader",
-    description:
-      "An interactive gallery experiment with depth, motion, and custom visual effects.",
-    imageUrl: p2,
-    hasVideo: true,
-    liveUrl: "#",
-  },
-  {
-    title: "Music Visualizer",
-    subtitle: "Canvas - Audio API",
-    description:
-      "A generative audio-reactive canvas that transforms sound into animated scenes.",
-    imageUrl: p3,
     hasVideo: false,
-    liveUrl: "#",
-  },
-  {
-    title: "Task Flow",
-    subtitle: "TypeScript - UX",
-    description:
-      "A clean productivity interface focused on flow, organization, and accessible interactions.",
-    imageUrl: p4,
-    hasVideo: true,
-    liveUrl: "#",
-  },
-  {
-    title: "Weather Board",
-    subtitle: "API - Components",
-    description:
-      "A modular weather dashboard with component-driven layouts and quick city switching.",
-    imageUrl: p5,
-    hasVideo: false,
-    liveUrl: "#",
-  },
-  {
-    title: "Campus Map",
-    subtitle: "Data Viz - UI",
-    description:
-      "A map-based campus explorer with layered data views and easy route highlighting.",
-    imageUrl: p6,
-    hasVideo: true,
-    liveUrl: "#",
-  },
-  {
-    title: "Movie Finder",
-    subtitle: "Search - Filters",
-    description:
-      "A discovery app with fast search, smart filtering, and polished recommendation cards.",
-    imageUrl: p9,
-    hasVideo: true,
-    liveUrl: "#",
-  },
-  {
-    title: "Recipe Lab",
-    subtitle: "State - Design",
-    description:
-      "A playful recipe experience blending state-driven flows with warm visual styling.",
-    imageUrl: p10,
-    hasVideo: false,
-    liveUrl: "#",
+    liveUrl: "https://github.com/srijac9/meet-sri",
   },
 ];
 
@@ -129,7 +121,7 @@ const Projects = () => {
   }, [playback.currentTime, playback.duration]);
 
   const filters = useMemo(
-    () => ["all", ...Array.from(new Set(projectItems.map((item) => item.subtitle.split(" - ")[0])))],
+    () => ["all", ...Array.from(new Set(projectItems.flatMap((item) => item.tags)))],
     []
   );
 
@@ -137,7 +129,7 @@ const Projects = () => {
     () =>
       activeFilter === "all"
         ? projectItems
-        : projectItems.filter((item) => item.subtitle.startsWith(activeFilter)),
+        : projectItems.filter((item) => item.tags.includes(activeFilter)),
     [activeFilter]
   );
 
@@ -159,7 +151,7 @@ const Projects = () => {
           {"<"} back home
         </Link>
 
-        <div className="mt-24 w-full px-4">
+        <div className="mt-24 w-full px-3 sm:px-4">
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
             <img
               src={projectsHeader}
@@ -329,15 +321,16 @@ const Projects = () => {
                 </button>
               ))}
             </nav>
-            <div className="grid w-full grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-5 lg:gap-3 xl:gap-3.5">
               {filteredProjects.map((project) => (
                 <MusicPlayerCard
                   key={project.title}
                   title={project.title}
-                  subtitle={project.subtitle}
+                  tags={project.tags}
                   description={project.description}
                   imageUrl={project.imageUrl}
                   hasVideo={project.hasVideo}
+                  videoUrl={project.videoUrl}
                   liveUrl={project.liveUrl}
                 />
               ))}
