@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Special+Elite&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Caveat:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&family=Special+Elite&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -122,6 +122,10 @@
 
   .font-elegant {
     font-family: 'Playfair Display', serif;
+  }
+
+  .font-tabloid {
+    font-family: 'Anton', sans-serif;
   }
 }
 

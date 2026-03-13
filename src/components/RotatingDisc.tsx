@@ -1,22 +1,168 @@
-﻿import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import photosCollage from "@/assets/photos-collage.png";
 import aboutCollage from "@/assets/about-collage.png";
 import discCollage from "@/assets/disc-collage.svg";
+import projectsTitle from "@/assets/projects.png";
+import experienceTitle from "@/assets/experience.png";
 import photosTitle from "@/assets/photos-title.png";
 import aboutTitle from "@/assets/about-title.png";
 
 interface RotatingDiscProps {
   isPlaying: boolean;
-  onToggle: () => void;
 }
 
-const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
+const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
   const navigate = useNavigate();
+  const [discRotation, setDiscRotation] = useState(0);
+  const [isSettlingToPause, setIsSettlingToPause] = useState(false);
+  const rotationRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const lastFrameTimeRef = useRef<number | null>(null);
+  const settleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasPlayedRef = useRef(false);
+  const projectsBaseTransform = "scale(1.20)";
+  const projectsHoverTransform = "scale(1.30)";
+  const experienceBaseTransform = "scale(2.20)";
+  const experienceHoverTransform = "scale(2.375)";
   const photosBaseTransform = "translateY(5.5rem) scale(1.35)";
-  const photosHoverTransform = "translateY(5.5rem) scale(1.45)";
+  const photosHoverTransform = "translateY(5.9rem) scale(1.45)";
+  const cornerTextSharedStyles = {
+    textShadow: "0 2px 8px rgba(0,0,0,0.7)",
+  } as const;
+
+  useEffect(() => {
+    const clearRaf = () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+
+    const clearSettleTimeout = () => {
+      if (settleTimeoutRef.current) {
+        clearTimeout(settleTimeoutRef.current);
+        settleTimeoutRef.current = null;
+      }
+    };
+
+    clearRaf();
+    clearSettleTimeout();
+    lastFrameTimeRef.current = null;
+
+    if (isPlaying) {
+      hasPlayedRef.current = true;
+      setIsSettlingToPause(false);
+
+      const spin = (timestamp: number) => {
+        if (lastFrameTimeRef.current === null) {
+          lastFrameTimeRef.current = timestamp;
+        }
+
+        const deltaSeconds = (timestamp - lastFrameTimeRef.current) / 1000;
+        lastFrameTimeRef.current = timestamp;
+
+        rotationRef.current = (rotationRef.current + deltaSeconds * 18) % 360;
+        setDiscRotation(rotationRef.current);
+        rafRef.current = requestAnimationFrame(spin);
+      };
+
+      rafRef.current = requestAnimationFrame(spin);
+
+      return () => {
+        clearRaf();
+        clearSettleTimeout();
+      };
+    }
+
+    if (hasPlayedRef.current) {
+      const current = rotationRef.current;
+      const target = 0;
+
+      if (Math.abs(current - target) > 0.1) {
+        setIsSettlingToPause(true);
+        rotationRef.current = target;
+        setDiscRotation(target);
+
+        settleTimeoutRef.current = setTimeout(() => {
+          setIsSettlingToPause(false);
+        }, 900);
+      }
+    }
+
+    return () => {
+      clearRaf();
+      clearSettleTimeout();
+    };
+  }, [isPlaying]);
 
   return (
     <div className="relative">
+      {/* Corner labels (shown when disc is paused) */}
+      <div
+        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        style={{
+          ...cornerTextSharedStyles,
+          top: "7%",
+          left: "-46%",
+          opacity: isPlaying ? 0 : 1,
+          transform: isPlaying
+            ? "translate(42px, 24px)"
+            : "translate(0, 0)",
+        }}
+      >
+        <p className="font-handwritten text-2xl text-white md:text-3xl">Projects</p>
+        <p className="mt-1 font-handwritten text-xs text-white/75">things I have built</p>
+      </div>
+
+      <div
+        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        style={{
+          ...cornerTextSharedStyles,
+          top: "7%",
+          right: "-46%",
+          opacity: isPlaying ? 0 : 1,
+          transform: isPlaying
+            ? "translate(-42px, 24px)"
+            : "translate(0, 0)",
+        }}
+      >
+        <p className="font-handwritten text-2xl text-white md:text-3xl">Photos</p>
+        <p className="mt-1 font-handwritten text-xs text-white/75">moments I have captured</p>
+      </div>
+
+      <div
+        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        style={{
+          ...cornerTextSharedStyles,
+          bottom: "7%",
+          left: "-46%",
+          opacity: isPlaying ? 0 : 1,
+          transform: isPlaying
+            ? "translate(42px, -24px)"
+            : "translate(0, 0)",
+        }}
+      >
+        <p className="font-handwritten text-2xl text-white md:text-3xl">Experience</p>
+        <p className="mt-1 font-handwritten text-xs text-white/75">roles and internships</p>
+      </div>
+
+      <div
+        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        style={{
+          ...cornerTextSharedStyles,
+          bottom: "7%",
+          right: "-46%",
+          opacity: isPlaying ? 0 : 1,
+          transform: isPlaying
+            ? "translate(-42px, -24px)"
+            : "translate(0, 0)",
+        }}
+      >
+        <p className="font-handwritten text-2xl text-white md:text-3xl">About me</p>
+        <p className="mt-1 font-handwritten text-xs text-white/75">a little bit about me</p>
+      </div>
+
       {/* Soft glow behind the disc */}
       <div
         className="pointer-events-none absolute -inset-8 rounded-full blur-3xl"
@@ -32,17 +178,21 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
         className="relative w-72 h-72 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] rounded-full p-2"
         style={{
           background:
-            "linear-gradient(135deg, hsl(37 55% 90%) 0%, hsl(37 50% 88%) 50%, hsl(37 55% 92%) 100%)",
-          boxShadow:
-            "0 12px 48px rgba(0, 0, 0, 0.35), inset 0 2px 4px rgba(255, 255, 255, 0.3)",
+            "linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 50%, #262626 100%)",
+          boxShadow: "0 12px 48px rgba(0, 0, 0, 0.45)",
         }}
       >
         {/* Inner rotating disc */}
         <div
-          className={`w-full h-full rounded-full overflow-hidden relative ${isPlaying ? "animate-spin-slow" : ""}`}
+          className="w-full h-full rounded-full overflow-hidden relative"
           style={{
             background:
-              "radial-gradient(circle at 50% 50%, #3D0A0A 0%, #3D0A0A 12%, transparent 12.5%), radial-gradient(circle at 50% 50%, transparent 12.5%, #5A1010 13%, #6E1414 22%, #8B2020 30%, #7A1A1A 45%, #6E1414 55%, #8B2020 70%, #A94442 85%, #D4B896 95%, #F3E5D0 100%)",
+              "radial-gradient(circle at 50% 50%, #3D0A0A 0%, #3D0A0A 12%, transparent 12.5%), radial-gradient(circle at 50% 50%, transparent 12.5%, #5A1010 13%, #6E1414 22%, #8B2020 30%, #7A1A1A 45%, #6E1414 55%, #8B2020 70%, #A94442 85%, #171717 95%, #080808 100%)",
+            transform: `rotate(${discRotation}deg)`,
+            transition: isSettlingToPause
+              ? "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)"
+              : "none",
+            willChange: "transform",
           }}
         >
           {/* Disc background */}
@@ -143,6 +293,106 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
             />
           </div>
 
+          {/* PROJECTS BUTTON */}
+          <button
+            type="button"
+            onClick={() => navigate("/projects")}
+            onMouseEnter={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = projectsHoverTransform;
+              img.style.filter = "drop-shadow(0 10px 16px rgba(0,0,0,0.35))";
+            }}
+            onMouseLeave={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = projectsBaseTransform;
+              img.style.filter = "drop-shadow(0 0 0 rgba(0,0,0,0))";
+            }}
+            className="absolute group"
+            style={{
+              top: "38%",
+              left: "32%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 6,
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              lineHeight: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "7.5rem",
+              height: "5rem",
+            }}
+            aria-label="Go to Projects"
+          >
+            <img
+              src={projectsTitle}
+              alt="Projects"
+              draggable={false}
+              className="transition-transform duration-300"
+              style={{
+                filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
+                width: "11rem",
+                maxWidth: "38vw",
+                transform: projectsBaseTransform,
+                transformOrigin: "center",
+                pointerEvents: "none",
+              }}
+            />
+          </button>
+
+          {/* EXPERIENCE BUTTON */}
+          <button
+            type="button"
+            onClick={() => navigate("/experience")}
+            onMouseEnter={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = experienceHoverTransform;
+              img.style.filter = "drop-shadow(0 10px 16px rgba(0,0,0,0.35))";
+            }}
+            onMouseLeave={(e) => {
+              const img = e.currentTarget.querySelector("img");
+              if (!img) return;
+              img.style.transform = experienceBaseTransform;
+              img.style.filter = "drop-shadow(0 0 0 rgba(0,0,0,0))";
+            }}
+            className="absolute group"
+            style={{
+              top: "62.5%",
+              left: "29.5%",
+              transform: "translate(-50%, -50%)",
+              zIndex: 6,
+              background: "transparent",
+              border: "none",
+              padding: 0,
+              lineHeight: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              width: "8rem",
+              height: "5rem",
+            }}
+            aria-label="Go to Experience"
+          >
+            <img
+              src={experienceTitle}
+              alt="Experience"
+              draggable={false}
+              className="transition-transform duration-300"
+              style={{
+                filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
+                width: "11rem",
+                maxWidth: "38vw",
+                transform: experienceBaseTransform,
+                transformOrigin: "center",
+                pointerEvents: "none",
+              }}
+            />
+          </button>
+
           {/* PHOTOS BUTTON */}
           <button
             type="button"
@@ -238,26 +488,24 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
                 filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
                 width: "15rem",
                 maxWidth: "46vw",
-                transform: "scale(1.35)",
+                transform: "scale(1.30)",
                 transformOrigin: "center",
                 pointerEvents: "none",
               }}
             />
           </button>
 
-          {/* Center hole / play toggle */}
-          <button
-            type="button"
-            onClick={onToggle}
-            aria-label={isPlaying ? "Pause music" : "Play music"}
-            className="absolute z-[9] flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full transition-transform hover:scale-105 sm:h-16 sm:w-16 md:h-20 md:w-20"
+          {/* Center hole */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute z-[9] flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-16 sm:w-16 md:h-20 md:w-20"
             style={{
               top: "50%",
               left: "50%",
               background:
-                "linear-gradient(135deg, hsl(37 55% 90%) 0%, hsl(37 50% 88%) 50%, hsl(37 55% 92%) 100%)",
+                "linear-gradient(135deg, #1b1b1b 0%, #0b0b0b 50%, #202020 100%)",
               boxShadow:
-                "0 2px 10px rgba(0, 0, 0, 0.3), inset 0 1px 3px rgba(255, 255, 255, 0.5)",
+                "0 2px 10px rgba(0, 0, 0, 0.55), inset 0 1px 3px rgba(255, 255, 255, 0.12)",
             }}
           />
 
@@ -273,28 +521,9 @@ const RotatingDisc = ({ isPlaying, onToggle }: RotatingDiscProps) => {
         </div>
       </div>
 
-      {/* Play hint below disc */}
-      <p
-        className="mt-5 text-center font-elegant text-3xl tracking-wide text-paper/45 transition-opacity duration-300"
-        style={{
-          animation: isPlaying ? "none" : "pulse-glow 2.5s ease-in-out infinite",
-        }}
-      >
-        {isPlaying ? "click disc to pause" : "click disc to play"}
-      </p>
-
-      {/* Temporary shortcut to Projects page */}
-      <div className="mt-4 flex justify-center">
-        <button
-          type="button"
-          onClick={() => navigate("/projects")}
-          className="rounded-full border border-paper/35 bg-[#5d1214]/65 px-4 py-2 font-handwritten text-lg text-paper transition-colors hover:bg-[#6b1e28]/75"
-        >
-          temp: view projects
-        </button>
-      </div>
     </div>
   );
 };
 
 export default RotatingDisc;
+
