@@ -6,6 +6,7 @@ import SubtleAudioBackdrop from "@/components/SubtleAudioBackdrop";
 import p1 from "@/assets/p1.jpg";
 import breadboardImage from "@/assets/breadboard.png";
 import dermacareImage from "@/assets/dermacare.png";
+import dillpklImage from "@/assets/dillpklImage.png";
 import footprintImage from "@/assets/footprint.png";
 import iClickImage from "@/assets/iclick.png";
 import irrigationSystemImage from "@/assets/irrigationsystem.png";
@@ -14,6 +15,16 @@ import projectsHeader from "@/assets/projects-portfolio.png";
 import favouriteSong from "@/assets/favourite-song.mp3";
 
 const projectItems = [
+  {
+    title: "dill.pkl",
+    tags: ["Machine Learning", "Python", "LLM"],
+    description:
+      "An agent-based AutoML web app that automates and explains the end-to-end machine learning pipeline from raw data to deployment.",
+    imageUrl: dillpklImage,
+    hasVideo: true,
+    videoUrl: "https://youtu.be/gd5_XDCytLc",
+    liveUrl: "https://youtu.be/gd5_XDCytLc",
+  },
   {
     title: "iClick",
     tags: ["Python", "Computer Vision", "Machine Learning"],
