@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import photosCollage from "@/assets/photos-collage.png";
 import aboutCollage from "@/assets/about-collage.png";
@@ -111,8 +111,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-2xl text-white md:text-3xl">Projects</p>
-        <p className="mt-1 font-handwritten text-xs text-white/75">things I have built</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">Projects</p>
+        <p className="mt-1 font-handwritten text-sm text-white/75">things I have built</p>
       </div>
 
       <div
@@ -127,8 +127,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-2xl text-white md:text-3xl">Photos</p>
-        <p className="mt-1 font-handwritten text-xs text-white/75">moments I have captured</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">Photos</p>
+        <p className="mt-1 font-handwritten text-sm text-white/75">moments I have captured</p>
       </div>
 
       <div
@@ -143,8 +143,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-2xl text-white md:text-3xl">Experience</p>
-        <p className="mt-1 font-handwritten text-xs text-white/75">roles and internships</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">Experience</p>
+        <p className="mt-1 font-handwritten text-sm text-white/75">roles and internships</p>
       </div>
 
       <div
@@ -159,8 +159,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-2xl text-white md:text-3xl">About me</p>
-        <p className="mt-1 font-handwritten text-xs text-white/75">a little bit about me</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">About me</p>
+        <p className="mt-1 font-handwritten text-sm text-white/75">a little bit about me</p>
       </div>
 
       {/* Soft glow behind the disc */}
@@ -175,7 +175,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
 
       {/* Outer disc ring */}
       <div
-        className="relative w-72 h-72 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] rounded-full p-2"
+        className="relative h-[23rem] w-[23rem] rounded-full p-3 md:h-[31rem] md:w-[31rem] lg:h-[37rem] lg:w-[37rem]"
         style={{
           background:
             "linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 50%, #262626 100%)",
@@ -246,7 +246,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
-                transform: "translate(-0.8rem, 11rem) scale(2.5)",
+                transform: "translate(-1.05rem, 14.175rem) scale(2.5)",
               }}
             />
           </div>
@@ -270,7 +270,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
-                transform: "translate(-0.9rem, -2.5rem) scale(2.5)",
+                transform: "translate(-1.25rem, -3.6rem) scale(2.5)",
               }}
             />
           </div>
@@ -322,8 +322,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "7.5rem",
-              height: "5rem",
+              width: "9.25rem",
+              height: "6rem",
             }}
             aria-label="Go to Projects"
           >
@@ -334,7 +334,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               className="transition-transform duration-300"
               style={{
                 filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
-                width: "11rem",
+                width: "13.5rem",
                 maxWidth: "38vw",
                 transform: projectsBaseTransform,
                 transformOrigin: "center",
@@ -372,8 +372,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "8rem",
-              height: "5rem",
+              width: "10rem",
+              height: "6rem",
             }}
             aria-label="Go to Experience"
           >
@@ -384,7 +384,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               className="transition-transform duration-300"
               style={{
                 filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
-                width: "11rem",
+                width: "13.5rem",
                 maxWidth: "38vw",
                 transform: experienceBaseTransform,
                 transformOrigin: "center",
@@ -422,8 +422,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "7.5rem",
-              height: "7.5rem",
+              width: "9rem",
+              height: "9rem",
               borderRadius: "9999px",
             }}
             aria-label="Go to Photos"
@@ -435,7 +435,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               className="transition-transform duration-300"
               style={{
                 filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
-                width: "14rem",
+                width: "17rem",
                 maxWidth: "42vw",
                 transform: photosBaseTransform,
                 transformOrigin: "center",
@@ -473,8 +473,8 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: "7.5rem",
-              height: "7.5rem",
+              width: "9rem",
+              height: "9rem",
               borderRadius: "9999px",
             }}
             aria-label="Go to About Me"
@@ -486,7 +486,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
               className="transition-transform duration-300"
               style={{
                 filter: "drop-shadow(0 0 0 rgba(0,0,0,0))",
-                width: "15rem",
+                width: "18rem",
                 maxWidth: "46vw",
                 transform: "scale(1.30)",
                 transformOrigin: "center",
@@ -498,7 +498,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
           {/* Center hole */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute z-[9] flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-16 sm:w-16 md:h-20 md:w-20"
+            className="pointer-events-none absolute z-[9] flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full sm:h-20 sm:w-20 md:h-24 md:w-24 lg:h-28 lg:w-28"
             style={{
               top: "50%",
               left: "50%",

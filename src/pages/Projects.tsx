@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import FloatingHearts from "@/components/FloatingHearts";
 import MusicPlayerCard from "@/components/MusicPlayerCard";
+import PageEdgeShadow from "@/components/PageEdgeShadow";
 import SubtleAudioBackdrop from "@/components/SubtleAudioBackdrop";
 import p1 from "@/assets/p1.jpg";
 import breadboardImage from "@/assets/breadboard.png";
@@ -148,21 +149,22 @@ const Projects = () => {
     <div
       className="relative min-h-screen overflow-x-hidden"
       style={{
-        background:
-          "linear-gradient(180deg, #4b090f 0%, #5a0d13 34%, var(--background) 72%, var(--background) 100%)",
+        background: "#5a0d13",
       }}
     >
       <FloatingHearts />
 
-      <div className="relative z-10 min-h-screen py-12">
-        <Link
-          to="/"
-          className="absolute left-6 top-6 z-20 rounded-full border border-paper/30 bg-background/65 px-4 py-2 text-lg font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
-        >
-          {"<"} back home
-        </Link>
+      <PageEdgeShadow className="relative z-10 mx-auto min-h-screen w-full max-w-[1380px]">
+        <div className="absolute inset-x-0 top-6 z-20 px-6 md:px-12 lg:px-16">
+          <Link
+            to="/"
+            className="ml-5 mt-2 inline-flex rounded-full border border-paper/30 bg-background/65 px-4 py-2 text-lg font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
+          >
+            {"<"} back home
+          </Link>
+        </div>
 
-        <div className="mt-24 w-full px-3 sm:px-4">
+        <div className="px-6 pt-24 pb-12 md:px-12 lg:px-16">
           <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
             <img
               src={projectsHeader}
@@ -170,7 +172,7 @@ const Projects = () => {
               className="mt-20 block w-full max-w-[28rem] object-contain lg:justify-self-center"
               style={{ height: "auto" }}
             />
-            <div className="relative lg:col-span-2">
+            <div className="relative lg:-ml-40 lg:col-span-2 xl:-ml-52">
               <SubtleAudioBackdrop
                 src={favouriteSong}
                 title=""
@@ -179,40 +181,16 @@ const Projects = () => {
                 controlsClassName="sm:translate-x-8"
                 autoStart={false}
                 height={360}
+                centerXOffset={-40}
               />
-              <div className="pointer-events-none absolute -left-20 top-[42%] z-20 sm:-left-12">
+              <div className="pointer-events-none absolute right-[5%] top-[29%] z-20 sm:right-[8%] sm:top-[28%] lg:right-[10%]">
                 <p
-                  className="max-w-[420px] text-center text-[24px] font-light leading-relaxed tracking-wider sm:text-[30px]"
-                  style={{ color: "rgba(255, 255, 255, 0.94)" }}
+                  className="max-w-[300px] font-handwritten text-[25px] leading-[1.08] tracking-normal sm:text-[30px]"
+                  style={{ color: "rgba(245, 230, 218, 0.72)" }}
                 >
-                  <span>Cool song find</span>
+                  <span>cool song find</span>
                   <span className="block">of the month</span>
                 </p>
-                <svg
-                  className="absolute left-[110%] top-[86%] z-30 hidden h-[64px] w-[88px] -translate-y-1/2 -rotate-12 sm:block"
-                  width="88"
-                  height="64"
-                  viewBox="0 0 88 64"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M9 9 C 12 27, 30 38, 60 42"
-                    stroke="#ffffff"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    fill="none"
-                  />
-                  <path
-                    d="M49 35 L61 42 L47 49"
-                    stroke="#ffffff"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    fill="none"
-                  />
-                </svg>
               </div>
               <div className="pointer-events-none absolute inset-x-8 top-[67%] z-20 -translate-y-1/2 sm:inset-x-10">
                 <div className="mx-auto w-[78%] max-w-[36rem] sm:translate-x-8">
@@ -306,10 +284,7 @@ const Projects = () => {
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="mt-24 w-full px-4">
-          <div className="w-full">
+          <div className="mt-24 w-full">
             <div
               className="mb-5 h-px w-full bg-gradient-to-r from-transparent via-paper/35 to-transparent"
               aria-hidden="true"
@@ -332,7 +307,7 @@ const Projects = () => {
                 </button>
               ))}
             </nav>
-            <div className="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-5 lg:gap-3 xl:gap-3.5">
+            <div className="grid w-full grid-cols-1 gap-2.5 sm:grid-cols-2 sm:gap-3 lg:grid-cols-4 lg:gap-3 xl:gap-3.5">
               {filteredProjects.map((project) => (
                 <MusicPlayerCard
                   key={project.title}
@@ -348,7 +323,7 @@ const Projects = () => {
             </div>
           </div>
         </div>
-      </div>
+      </PageEdgeShadow>
     </div>
   );
 };

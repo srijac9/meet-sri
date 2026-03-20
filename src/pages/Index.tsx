@@ -32,7 +32,7 @@ const Index = () => {
           }}
         />
 
-        <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-6 px-4 py-14 sm:gap-8">
+        <div className="relative z-20 flex min-h-screen flex-col items-center justify-center gap-10 px-4 py-16 sm:gap-12">
           <RotatingDisc isPlaying={isPlaying} />
           <MusicPlayer isPlaying={isPlaying} onToggle={togglePlay} />
         </div>

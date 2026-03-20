@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import FloatingHearts from "@/components/FloatingHearts";
+import PageEdgeShadow from "@/components/PageEdgeShadow";
 import SudokuPanel from "@/components/SudokuPanel";
 import chitturiTitle from "@/assets/CHITTURI.png";
 import srijaDrawing from "@/assets/srija-drawing.png";
@@ -74,16 +75,19 @@ const About = () => {
     <main className="relative min-h-screen bg-paper text-burgundy-dark overflow-x-hidden">
       <FloatingHearts fillColor="rgba(139, 58, 58, 0.35)" />
 
-      <Link
-        to="/"
-        className="absolute left-6 top-6 z-20 rounded-full border border-burgundy-dark/30 bg-paper/75 px-4 py-2 text-lg font-handwritten text-burgundy-dark backdrop-blur-sm transition-colors hover:text-burgundy"
-      >
-        {"<"} back home
-      </Link>
+      <PageEdgeShadow className="relative z-10 mx-auto min-h-screen w-full max-w-[1380px]">
+        <div className="absolute inset-x-0 top-6 z-20 px-6 md:px-12 lg:px-16">
+          <Link
+            to="/"
+            className="ml-5 mt-2 inline-flex rounded-full border border-burgundy-dark/30 bg-paper/75 px-4 py-2 text-lg font-handwritten text-burgundy-dark backdrop-blur-sm transition-colors hover:text-burgundy"
+          >
+            {"<"} back home
+          </Link>
+        </div>
 
-      <div className="relative z-10 pt-32 md:pt-40 pb-3">
-        <header className="w-full flex flex-col items-center gap-1 pb-3">
-          <div className="w-full px-4 md:px-8">
+      <div className="relative z-10 px-6 pt-32 pb-3 md:px-12 md:pt-40 lg:px-16">
+        <header className="flex w-full flex-col items-center gap-1 pb-3">
+          <div className="w-full">
             <div
               className="h-[2px] w-full"
               style={fadedRule}
@@ -94,7 +98,7 @@ const About = () => {
             />
           </div>
 
-          <div className="w-full flex items-center justify-between px-4 pt-2 md:px-8">
+          <div className="flex w-full items-center justify-between pt-2">
             <span className="font-mono text-[10px] tracking-[0.3em] uppercase text-[#c4a882]">
               Est. 2025
             </span>
@@ -103,35 +107,8 @@ const About = () => {
             </span>
           </div>
 
-          <div className="w-full flex justify-center py-5 md:py-7">
-            <div className="relative flex flex-col items-center px-4 text-[#140606]">
-              <div
-                className="absolute left-[-0.75rem] top-1/2 hidden -translate-y-1/2 -rotate-[18deg] text-[#2a0908] sm:block md:left-[-5.5rem] lg:left-[-7.5rem]"
-                aria-hidden="true"
-              >
-                <p className="font-handwritten text-lg font-bold leading-none md:text-2xl">
-                  Full-Stack
-                </p>
-                <p className="font-handwritten text-lg font-bold leading-none md:text-2xl">
-                  Developer :)
-                </p>
-              </div>
-
-              <div
-                className="absolute right-[-0.75rem] top-1/2 hidden -translate-y-1/2 rotate-[14deg] text-[#2a0908] sm:block md:right-[-6rem] lg:right-[-8rem]"
-                aria-hidden="true"
-              >
-                <p className="font-handwritten text-lg leading-none md:text-2xl">
-                  Computer
-                </p>
-                <p className="font-handwritten text-lg leading-none md:text-2xl">
-                  Engineering
-                </p>
-                <p className="font-handwritten text-lg leading-none md:text-2xl">
-                  Student!
-                </p>
-              </div>
-
+          <div className="flex w-full justify-center py-5 md:py-7">
+            <div className="relative flex flex-col items-center text-[#140606]">
               <p className="font-handwritten text-base leading-none text-[#5b2620] md:text-lg">
                 Spotlight On
               </p>
@@ -174,7 +151,7 @@ const About = () => {
             </div>
           </div>
 
-          <div className="w-full flex items-center justify-between px-4 pt-2 md:px-8">
+          <div className="flex w-full items-center justify-between pt-2">
             <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-[#c4a882]">
               Vol. I, No. 1
             </span>
@@ -183,7 +160,7 @@ const About = () => {
             </span>
           </div>
 
-          <div className="w-full px-4 pt-2 md:px-8">
+          <div className="w-full pt-2">
             <div
               className="h-px w-full"
               style={fadedThinRule}
@@ -196,7 +173,8 @@ const About = () => {
         </header>
       </div>
 
-      <section className="relative z-10 mx-auto w-full max-w-[1380px] px-6 pb-16 md:px-12 lg:px-16">
+      <div className="relative z-10 px-6 pb-16 md:px-12 lg:px-16">
+      <section>
         <div className="grid gap-6 lg:grid-cols-[0.95fr_1.35fr]">
           <figure className="mx-auto w-full max-w-[28rem] space-y-3 lg:mx-0">
             <div
@@ -355,6 +333,8 @@ const About = () => {
           <SudokuPanel />
         </section>
       </section>
+      </div>
+      </PageEdgeShadow>
     </main>
   );
 };
