@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import PageEdgeShadow from "@/components/PageEdgeShadow";
 import Scene from "@/components/Scene";
 import galleryTitle from "@/assets/gallery-title-cropped.png";
 
@@ -146,91 +147,94 @@ const Photos = () => {
 
   return (
     <div className="min-h-screen bg-burgundy-dark text-burgundy-dark">
-      <header className="relative z-20 h-[82vh] min-h-[520px] w-full overflow-visible">
-        <Scene />
+      <PageEdgeShadow className="relative mx-auto min-h-screen w-full max-w-[1380px] px-6 md:px-12 lg:px-16">
+        <header className="relative z-20 w-full overflow-visible">
+          <div className="relative aspect-[16/6] min-h-[260px] w-full overflow-hidden md:min-h-[320px]">
+            <Scene />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-burgundy-dark/10 via-burgundy-dark/25 to-burgundy-dark/80" />
+          </div>
 
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-burgundy-dark/10 via-burgundy-dark/25 to-burgundy-dark/80" />
+          <div className="absolute inset-x-0 top-6 z-20">
+            <Link
+              to="/"
+              className="ml-5 mt-2 inline-flex rounded-full border border-paper/30 bg-background/65 px-4 py-2 text-lg font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
+            >
+              {"<"} back home
+            </Link>
+          </div>
 
-        <Link
-          to="/"
-          className="absolute left-6 top-6 z-20 rounded-full border border-paper/30 bg-background/65 px-4 py-2 text-lg font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
-        >
-          {"<"} back home
-        </Link>
+          <div className="pointer-events-none absolute inset-x-0 bottom-[-78px] z-30 md:bottom-[-96px]">
+            <div className="text-center">
+              <img
+                src={galleryTitle}
+                alt="Gallery"
+                className="mx-auto w-[24rem] max-w-[88vw] drop-shadow-[0_10px_22px_rgba(0,0,0,0.35)] md:w-[38rem]"
+                style={{ transform: "translateY(44px)" }}
+              />
+            </div>
+          </div>
+        </header>
 
-        <div className="pointer-events-none absolute bottom-0 left-1/2 z-20 w-full max-w-5xl -translate-x-1/2 translate-y-1 px-6 text-center md:translate-y-2">
-          <img
-            src={galleryTitle}
-            alt="Gallery"
-            className="mx-auto w-[24rem] max-w-[88vw] drop-shadow-[0_10px_22px_rgba(0,0,0,0.35)] md:w-[38rem]"
-            style={{ transform: "translateY(64px)" }}
-          />
-          <p
-            className="font-handwritten text-base text-paper/90 md:text-xl"
-            style={{ marginTop: "-42px", transform: "translateY(-6px)" }}
-          >
-            my photo journal
-          </p>
-        </div>
-      </header>
-
-      <section className="relative z-0 bg-paper">
-        <div className="w-full p-0">
-          <div className="grid w-full grid-cols-4 gap-1">
-            {galleryItems.map((item) => (
-              <button
-                type="button"
-                key={item.id}
-                onClick={() => toggleCard(item.id)}
-                aria-pressed={flippedCards.has(item.id)}
-                aria-label={`Flip gallery card ${item.id}`}
-                className="relative aspect-[3/2] h-full w-full [perspective:1200px] focus:outline-none focus-visible:ring-2 focus-visible:ring-burgundy-dark/40"
-              >
-                <span
-                  className="absolute inset-0 block [transform-style:preserve-3d] transition-transform duration-700 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]"
-                  style={{ transform: flippedCards.has(item.id) ? "rotateY(180deg)" : "rotateY(0deg)" }}
+        <section className="relative z-10 -mt-2 bg-burgundy-dark md:-mt-4">
+          <div className="pt-10 md:pt-5">
+            <div className="grid w-full grid-cols-2 gap-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              {galleryItems.map((item) => (
+                <button
+                  type="button"
+                  key={item.id}
+                  onClick={() => toggleCard(item.id)}
+                  aria-pressed={flippedCards.has(item.id)}
+                  aria-label={`Flip gallery card ${item.id}`}
+                  className="group relative aspect-[3/2] h-full w-full [perspective:1200px] transition-transform duration-500 hover:z-20 hover:-translate-y-1 focus:outline-none focus-visible:z-20 focus-visible:ring-2 focus-visible:ring-burgundy-dark/40"
                 >
-                  <span className="absolute inset-0 overflow-hidden border border-burgundy-dark/20 bg-[linear-gradient(150deg,rgba(120,16,28,0.14),rgba(247,233,206,0.34))] shadow-[0_10px_24px_rgba(80,20,20,0.14)] [backface-visibility:hidden]">
-                    {(() => {
-                      const imgSrc =
-                        assetMap.get(item.image) ||
-                        assetMap.get(item.image.toUpperCase()) ||
-                        "";
-
-                      return (
-                        <img
-                          src={imgSrc}
-                          alt={item.alt}
-                          className="h-full w-full object-cover"
-                          loading="lazy"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
-                      );
-                    })()}
-                  </span>
                   <span
-                    className="absolute inset-0 flex items-center justify-center border border-burgundy-dark/20 bg-paper px-3 py-3 [backface-visibility:hidden] md:px-4"
-                    style={{ transform: "rotateY(180deg)" }}
+                    className="absolute inset-0 block [transform-style:preserve-3d] transition-transform duration-700 [transition-timing-function:cubic-bezier(0.22,1,0.36,1)]"
+                    style={{ transform: flippedCards.has(item.id) ? "rotateY(180deg)" : "rotateY(0deg)" }}
                   >
-                    <span className="flex h-full w-full flex-col justify-between text-left">
-                      <span className="mt-2 block font-handwritten text-[1.05rem] leading-[1.5] text-burgundy-dark/90 md:mt-3 md:text-[1.18rem]">
-                        {item.body}
-                      </span>
-                      <span className="mt-3 inline-block border-t border-burgundy-dark/20 pt-2 font-typewriter text-[10px] uppercase tracking-[0.24em] text-burgundy-dark/70 md:text-xs">
-                        {item.place}
+                    <span className="absolute inset-0 overflow-hidden border border-paper/10 bg-[linear-gradient(150deg,rgba(120,16,28,0.18),rgba(120,16,28,0.04))] shadow-[0_10px_24px_rgba(40,8,12,0.24)] [backface-visibility:hidden]">
+                      {(() => {
+                        const imgSrc =
+                          assetMap.get(item.image) ||
+                          assetMap.get(item.image.toUpperCase()) ||
+                          "";
+
+                        return (
+                          <img
+                            src={imgSrc}
+                            alt={item.alt}
+                            className="h-full w-full object-cover"
+                            loading="lazy"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                            }}
+                          />
+                        );
+                      })()}
+                      <span className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,246,230,0.12),transparent_42%),linear-gradient(180deg,transparent_40%,rgba(59,7,12,0.22)_100%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                      <span className="pointer-events-none absolute inset-0 ring-1 ring-paper/0 transition-all duration-500 group-hover:ring-paper/20" />
+                    </span>
+                    <span
+                      className="absolute inset-0 flex items-center justify-center border border-paper/10 bg-[#6b1820] px-3 py-3 [backface-visibility:hidden] md:px-4"
+                      style={{ transform: "rotateY(180deg)" }}
+                    >
+                      <span className="flex h-full w-full flex-col justify-between text-left">
+                        <span className="mt-2 block font-handwritten text-[1.05rem] leading-[1.5] text-paper/90 md:mt-3 md:text-[1.18rem]">
+                          {item.body}
+                        </span>
+                        <span className="mt-3 inline-block border-t border-paper/15 pt-2 font-typewriter text-[10px] uppercase tracking-[0.24em] text-paper/65 md:text-xs">
+                          {item.place}
+                        </span>
                       </span>
                     </span>
                   </span>
-                </span>
-              </button>
-            ))}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <div className="h-12 bg-burgundy-dark md:h-16" aria-hidden="true" />
+        <div className="h-12 bg-burgundy-dark md:h-16" aria-hidden="true" />
+      </PageEdgeShadow>
     </div>
   );
 };

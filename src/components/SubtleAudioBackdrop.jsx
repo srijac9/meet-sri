@@ -113,6 +113,7 @@ const SubtleAudioBackdrop = ({
   controlsClassName = "",
   autoStart = false,
   height = 420,
+  centerXOffset = 0,
 }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
@@ -371,7 +372,7 @@ const SubtleAudioBackdrop = ({
 
       // Screen center + responsive size to fill the right-side hero area.
       const isNarrow = drawWidth < 760;
-      const cx = drawWidth * (isNarrow ? 0.50 : 0.53);
+      const cx = drawWidth * (isNarrow ? 0.50 : 0.53) + centerXOffset;
       const cy = drawHeight * (isNarrow ? 0.52 : 0.54);
       const discRadius = Math.min(
         drawWidth * (isNarrow ? 0.46 : 0.54),

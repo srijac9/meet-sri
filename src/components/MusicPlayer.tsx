@@ -51,10 +51,10 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
   }, [isPlaying]);
 
   return (
-    <div className="mx-auto w-full max-w-sm">
+    <div className="mx-auto w-full max-w-lg">
       <div className="mb-3 flex justify-center">
         <span
-          className="inline-block rounded-full px-3 py-1 text-xs tracking-widest uppercase"
+          className="inline-block rounded-full px-4 py-1.5 text-xs tracking-[0.24em] uppercase"
           style={{
             backgroundColor: "rgba(243, 229, 208, 0.12)",
             color: "#D4B896",
@@ -66,22 +66,22 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
       </div>
 
       <div
-        className="rounded-2xl p-5"
+        className="rounded-[1.75rem] p-6 md:p-7"
         style={{
           backgroundColor: "rgba(243, 229, 208, 0.08)",
           boxShadow: "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(243,229,208,0.05)",
         }}
       >
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-5 flex items-center justify-between">
           <div>
-            <p className="font-elegant text-lg text-paper">{"hi, this is srija \u2661"}</p>
-            <p className="text-xs text-paper/60">portfolio side A</p>
+            <p className="font-elegant text-[1.75rem] leading-none text-paper md:text-[2rem]">{"hi, this is srija \u2661"}</p>
+            <p className="mt-1.5 text-xs text-paper/60 md:text-sm">portfolio side A</p>
           </div>
           <Waveform isPlaying={isPlaying} />
         </div>
 
-        <div className="mb-4">
-          <div className="h-1 w-full overflow-hidden rounded-full" style={{ backgroundColor: "rgba(243, 229, 208, 0.12)" }}>
+        <div className="mb-5">
+          <div className="h-1.5 w-full overflow-hidden rounded-full" style={{ backgroundColor: "rgba(243, 229, 208, 0.12)" }}>
             <div
               className="h-full rounded-full transition-all duration-100 ease-linear"
               style={{
@@ -90,7 +90,7 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
               }}
             />
           </div>
-          <div className="mt-1 flex justify-between text-[10px] text-paper/60">
+          <div className="mt-1.5 flex justify-between text-[11px] text-paper/60">
             <span>
               {Math.floor((progress / 100) * 3)}:
               {String(Math.floor(((progress / 100) * 180) % 60)).padStart(2, "0")}
@@ -99,14 +99,14 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center gap-8">
           <button className="text-paper/60" aria-label="Previous track">
-            <SkipBack size={18} />
+            <SkipBack size={22} />
           </button>
 
           <button
             onClick={onToggle}
-            className="flex h-11 w-11 items-center justify-center rounded-full transition-all hover:scale-105"
+            className="flex h-14 w-14 items-center justify-center rounded-full transition-all hover:scale-105 md:h-[4.25rem] md:w-[4.25rem]"
             style={{
               backgroundColor: "#A94442",
               boxShadow: "0 2px 8px rgba(169, 68, 66, 0.4)",
@@ -114,14 +114,14 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
             aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? (
-              <Pause size={18} className="text-paper" />
+              <Pause size={24} className="text-paper" />
             ) : (
-              <Play size={18} className="ml-0.5 text-paper" />
+              <Play size={24} className="ml-1 text-paper" />
             )}
           </button>
 
           <button className="text-paper/60" aria-label="Next track">
-            <SkipForward size={18} />
+            <SkipForward size={22} />
           </button>
         </div>
       </div>
