@@ -74,8 +74,8 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
       >
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <p className="font-elegant text-[1.75rem] leading-none text-paper md:text-[2rem]">{"hi, this is srija \u2661"}</p>
-            <p className="mt-1.5 text-xs text-paper/60 md:text-sm">portfolio side A</p>
+            <p className="font-elegant text-[1.75rem] leading-none text-paper md:text-[2rem]">{"srija's life \u2661"}</p>
+            <p className="mt-1.5 text-xs text-paper/60 md:text-sm">Student, Engineer, Developer</p>
           </div>
           <Waveform isPlaying={isPlaying} />
         </div>

@@ -54,27 +54,7 @@ const HeroSection = () => {
             transform: `translateY(${scrollProgress * -30}px)`,
           }}
         >
-          creative portfolio
-        </p>
-
-        <div
-          className="mb-4 mt-3"
-          style={{
-            width: "30px",
-            height: "1px",
-            backgroundColor: "rgba(212, 184, 150, 0.2)",
-            transform: `translateY(${scrollProgress * -25}px) scaleX(${1 - scrollProgress})`,
-          }}
-        />
-
-        <p
-          className="max-w-[240px] text-center text-[10px] font-light leading-relaxed tracking-wider sm:text-[11px]"
-          style={{
-            color: "rgba(212, 184, 150, 0.35)",
-            transform: `translateY(${scrollProgress * -20}px)`,
-          }}
-        >
-          art, music, and everything in between
+          personal portfolio
         </p>
 
         <div
