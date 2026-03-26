@@ -1,5 +1,5 @@
 ﻿import { useNavigate } from "react-router-dom";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import photosCollage from "@/assets/photos-collage.png";
 import aboutCollage from "@/assets/about-collage.png";
 import discCollage from "@/assets/disc-collage.svg";
@@ -14,13 +14,12 @@ interface RotatingDiscProps {
 
 const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
   const navigate = useNavigate();
-  const [discRotation, setDiscRotation] = useState(0);
-  const [isSettlingToPause, setIsSettlingToPause] = useState(false);
   const rotationRef = useRef(0);
   const rafRef = useRef<number | null>(null);
   const lastFrameTimeRef = useRef<number | null>(null);
   const settleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasPlayedRef = useRef(false);
+  const discRef = useRef<HTMLDivElement | null>(null);
   const projectsBaseTransform = "scale(1.20)";
   const projectsHoverTransform = "scale(1.30)";
   const experienceBaseTransform = "scale(2.20)";
@@ -32,6 +31,12 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
   } as const;
 
   useEffect(() => {
+    const applyRotation = (rotation: number) => {
+      if (discRef.current) {
+        discRef.current.style.transform = `rotate(${rotation}deg)`;
+      }
+    };
+
     const clearRaf = () => {
       if (rafRef.current !== null) {
         cancelAnimationFrame(rafRef.current);
@@ -52,7 +57,9 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
 
     if (isPlaying) {
       hasPlayedRef.current = true;
-      setIsSettlingToPause(false);
+      if (discRef.current) {
+        discRef.current.style.transition = "none";
+      }
 
       const spin = (timestamp: number) => {
         if (lastFrameTimeRef.current === null) {
@@ -63,7 +70,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
         lastFrameTimeRef.current = timestamp;
 
         rotationRef.current = (rotationRef.current + deltaSeconds * 18) % 360;
-        setDiscRotation(rotationRef.current);
+        applyRotation(rotationRef.current);
         rafRef.current = requestAnimationFrame(spin);
       };
 
@@ -76,16 +83,17 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
     }
 
     if (hasPlayedRef.current) {
-      const current = rotationRef.current;
-      const target = 0;
-
-      if (Math.abs(current - target) > 0.1) {
-        setIsSettlingToPause(true);
-        rotationRef.current = target;
-        setDiscRotation(target);
+      if (Math.abs(rotationRef.current) > 0.1) {
+        rotationRef.current = 0;
+        if (discRef.current) {
+          discRef.current.style.transition = "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)";
+        }
+        applyRotation(0);
 
         settleTimeoutRef.current = setTimeout(() => {
-          setIsSettlingToPause(false);
+          if (discRef.current) {
+            discRef.current.style.transition = "none";
+          }
         }, 900);
       }
     }
@@ -184,14 +192,11 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
       >
         {/* Inner rotating disc */}
         <div
+          ref={discRef}
           className="w-full h-full rounded-full overflow-hidden relative"
           style={{
             background:
               "radial-gradient(circle at 50% 50%, #3D0A0A 0%, #3D0A0A 12%, transparent 12.5%), radial-gradient(circle at 50% 50%, transparent 12.5%, #5A1010 13%, #6E1414 22%, #8B2020 30%, #7A1A1A 45%, #6E1414 55%, #8B2020 70%, #A94442 85%, #171717 95%, #080808 100%)",
-            transform: `rotate(${discRotation}deg)`,
-            transition: isSettlingToPause
-              ? "transform 900ms cubic-bezier(0.22, 1, 0.36, 1)"
-              : "none",
             willChange: "transform",
           }}
         >

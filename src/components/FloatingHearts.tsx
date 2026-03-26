@@ -13,7 +13,7 @@ interface FloatingHeartsProps {
   fillColor?: string;
 }
 
-const FloatingHearts = ({ fillColor = "#F3E5D0" }: FloatingHeartsProps) => {
+const FloatingHearts = ({ fillColor = "#b93a45" }: FloatingHeartsProps) => {
   const [hearts, setHearts] = useState<HeartItem[]>([]);
 
   useEffect(() => {
