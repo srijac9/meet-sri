@@ -423,14 +423,15 @@ const SudokuPanel = () => {
           </h4>
         </div>
         <p className="max-w-[30rem] font-serif text-sm leading-relaxed text-[#1f1110]">
-          Editable cells, live validation, generated puzzles, and game state are all live
-          here now. Click a square or use your keyboard to play.
+          Recently, just like my grandpa, I&apos;ve gotten really into Sudoku. If
+          I can&apos;t fall asleep, I&apos;ll usually finish a puzzle before bed.
+          Enjoy solving one!
         </p>
       </div>
       <div className="h-[2px] w-full" style={fadedRule} />
 
-      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,24rem)_1fr]">
-        <div className="mx-auto w-full max-w-[24rem]">
+      <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,31rem)_minmax(0,1fr)]">
+        <div className="mx-auto mt-3 w-full max-w-[31rem]">
           <div className="grid grid-cols-9 border-[3px] border-[#140606]">
             {game.board.flatMap((rowValues, row) =>
               rowValues.map((value, col) => {
@@ -454,7 +455,7 @@ const SudokuPanel = () => {
                     type="button"
                     onClick={() => setSelectedCell(row, col)}
                     onKeyDown={(event) => handleCellKeyDown(event, row, col)}
-                    className="flex aspect-square items-center justify-center font-tabloid text-xl outline-none transition-colors"
+                    className="flex aspect-square items-center justify-center font-tabloid text-[1.55rem] outline-none transition-colors md:text-[1.8rem]"
                     style={{
                       borderRight:
                         col === 8
@@ -492,43 +493,16 @@ const SudokuPanel = () => {
               })
             )}
           </div>
-
-          <div className="mt-4 grid grid-cols-5 gap-2">
-            {DIGITS.map((digit) => (
-              <button
-                key={digit}
-                type="button"
-                onClick={() => updateCellValue(digit)}
-                className="rounded-[0.9rem] border-2 border-[#140606] px-3 py-2 font-typewriter text-lg text-[#140606] transition-colors hover:bg-[#140606] hover:text-paper"
-              >
-                {digit}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => updateCellValue(0)}
-              className="col-span-2 rounded-[0.9rem] border-2 border-[#140606] px-3 py-2 font-typewriter text-lg text-[#140606] transition-colors hover:bg-[#140606] hover:text-paper"
-            >
-              Clear
-            </button>
-            <button
-              type="button"
-              onClick={resetBoard}
-              className="col-span-3 rounded-[0.9rem] border-2 border-[#140606] px-3 py-2 font-typewriter text-lg text-[#140606] transition-colors hover:bg-[#140606] hover:text-paper"
-            >
-              Reset
-            </button>
-          </div>
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <div className="grid gap-3 sm:grid-cols-3">
             {(["easy", "medium", "hard"] as Difficulty[]).map((difficulty) => (
               <button
                 key={difficulty}
                 type="button"
                 onClick={() => startNewGame(difficulty)}
-                className="rounded-[0.95rem] border-2 border-[#140606] px-4 py-3 font-typewriter text-sm uppercase tracking-[0.18em] transition-colors"
+                className="flex min-h-[3.6rem] items-center justify-center rounded-[1rem] border-2 border-[#140606] px-4 py-3 text-center font-typewriter text-sm uppercase leading-none tracking-[0.18em] transition-colors"
                 style={{
                   backgroundColor:
                     game.difficulty === difficulty ? "#140606" : "transparent",
@@ -540,7 +514,7 @@ const SudokuPanel = () => {
             ))}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="grid gap-3 grid-cols-2">
             <div className="rounded-[1rem] border border-[#140606]/35 px-3 py-3">
               <p className="font-typewriter text-[10px] uppercase tracking-[0.22em] text-[#5b2620]">
                 Time
@@ -575,25 +549,38 @@ const SudokuPanel = () => {
             </div>
           </div>
 
-          <div className="rounded-[1.1rem] border-[3px] border-[#140606] px-4 py-4">
-            <p className="text-[1.05rem] font-semibold not-italic uppercase leading-[1.02] tracking-[0.2em] text-[#140606]">
-              Live Validation
-            </p>
-            <p className="mt-2 font-serif text-base leading-relaxed text-[#1f1110]">
-              Repeated numbers and incorrect guesses are flagged automatically. Given
-              cells are locked, editable cells can be filled by clicking or typing, and
-              the game ends when the full board matches the generated solution.
-            </p>
+          <div className="pt-1">
+            <div className="grid grid-cols-3 gap-2.5">
+              {DIGITS.map((digit) => (
+                <button
+                  key={digit}
+                  type="button"
+                  onClick={() => updateCellValue(digit)}
+                  className="min-h-[3.6rem] rounded-[1rem] border-2 border-[#140606] px-3 py-2 font-typewriter text-lg text-[#140606] transition-colors hover:bg-[#140606] hover:text-paper"
+                >
+                  {digit}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-3 grid grid-cols-2 gap-2.5">
+              <button
+                type="button"
+                onClick={() => updateCellValue(0)}
+                className="min-h-[3.6rem] rounded-[1rem] border-2 border-[#140606] px-3 py-2 font-typewriter text-lg text-[#140606] transition-colors hover:bg-[#140606] hover:text-paper"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={resetBoard}
+                className="min-h-[3.6rem] rounded-[1rem] border-2 border-[#140606] px-3 py-2 font-typewriter text-lg text-[#140606] transition-colors hover:bg-[#140606] hover:text-paper"
+              >
+                Reset
+              </button>
+            </div>
           </div>
 
-          <div className="rounded-[1.1rem] border border-[#140606]/35 px-4 py-4">
-            <p className="font-typewriter text-[10px] uppercase tracking-[0.22em] text-[#5b2620]">
-              Status
-            </p>
-            <p className="mt-2 font-serif text-base leading-relaxed text-[#1f1110]">
-              {game.statusMessage}
-            </p>
-          </div>
         </div>
       </div>
     </section>

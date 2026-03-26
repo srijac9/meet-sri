@@ -108,67 +108,84 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
     <div className="relative">
       {/* Corner labels (shown when disc is paused) */}
       <div
-        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        className="pointer-events-none absolute max-w-[22rem] transition-all duration-700 ease-out"
         style={{
           ...cornerTextSharedStyles,
           top: "7%",
-          left: "-46%",
+          left: "-58%",
           opacity: isPlaying ? 0 : 1,
           transform: isPlaying
             ? "translate(42px, 24px)"
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-3xl text-white md:text-4xl">Projects</p>
-        <p className="mt-1 font-handwritten text-sm text-white/75">things I have built</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">PROJECTS</p>
+        <p className="mt-1 text-xl leading-relaxed text-white/75 md:text-[1.3rem]">
+          My projects that I made through hackathons and personal
+          exploration, spanning machine learning, AI, and full-stack systems,
+          with a focus on turning ideas into functional, end-to-end
+          applications-click the Projects section to explore my
+          showcase!
+        </p>
       </div>
 
       <div
-        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        className="pointer-events-none absolute max-w-[22rem] transition-all duration-700 ease-out"
         style={{
           ...cornerTextSharedStyles,
           top: "7%",
-          right: "-46%",
+          right: "-58%",
           opacity: isPlaying ? 0 : 1,
           transform: isPlaying
             ? "translate(-42px, 24px)"
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-3xl text-white md:text-4xl">Photos</p>
-        <p className="mt-1 font-handwritten text-sm text-white/75">moments I have captured</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">PHOTOS</p>
+        <p className="mt-1 text-xl leading-relaxed text-white/75 md:text-[1.3rem]">
+          My own gallery of favourite photos, from places around the world to
+          moments in my own backyard-click the Photos section to explore!
+        </p>
       </div>
 
       <div
-        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        className="pointer-events-none absolute max-w-[22rem] transition-all duration-700 ease-out"
         style={{
           ...cornerTextSharedStyles,
           bottom: "7%",
-          left: "-46%",
+          left: "-58%",
           opacity: isPlaying ? 0 : 1,
           transform: isPlaying
             ? "translate(42px, -24px)"
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-3xl text-white md:text-4xl">Experience</p>
-        <p className="mt-1 font-handwritten text-sm text-white/75">roles and internships</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">EXPERIENCE</p>
+        <p className="mt-1 text-xl leading-relaxed text-white/75 md:text-[1.3rem]">
+          A timeline of my experience, from internships to real-world roles,
+          showing what I&apos;ve worked on, what I&apos;ve learned, and how
+          I&apos;ve contributed along the way-click the Experience section on
+          the disc to explore!
+        </p>
       </div>
 
       <div
-        className="pointer-events-none absolute whitespace-nowrap transition-all duration-700 ease-out"
+        className="pointer-events-none absolute max-w-[22rem] transition-all duration-700 ease-out"
         style={{
           ...cornerTextSharedStyles,
           bottom: "7%",
-          right: "-46%",
+          right: "-58%",
           opacity: isPlaying ? 0 : 1,
           transform: isPlaying
             ? "translate(-42px, -24px)"
             : "translate(0, 0)",
         }}
       >
-        <p className="font-handwritten text-3xl text-white md:text-4xl">About me</p>
-        <p className="mt-1 font-handwritten text-sm text-white/75">a little bit about me</p>
+        <p className="font-handwritten text-3xl text-white md:text-4xl">ABOUT ME</p>
+        <p className="mt-1 text-xl leading-relaxed text-white/75 md:text-[1.3rem]">
+          A newspaper page about me highlighting my skills, technical
+          interests, and hobbies-click the About Me section to explore!
+        </p>
       </div>
 
       {/* Soft glow behind the disc */}

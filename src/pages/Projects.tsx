@@ -4,13 +4,13 @@ import FloatingHearts from "@/components/FloatingHearts";
 import MusicPlayerCard from "@/components/MusicPlayerCard";
 import PageEdgeShadow from "@/components/PageEdgeShadow";
 import SubtleAudioBackdrop from "@/components/SubtleAudioBackdrop";
-import p1 from "@/assets/p1.jpg";
 import breadboardImage from "@/assets/breadboard.png";
 import dermacareImage from "@/assets/dermacare.png";
 import dillpklImage from "@/assets/dillpklImage.png";
 import footprintImage from "@/assets/footprint.png";
 import iClickImage from "@/assets/iclick.png";
 import irrigationSystemImage from "@/assets/irrigationsystem.png";
+import personalWebsiteImage from "@/assets/personal-website.png";
 import recipeFinderImage from "@/assets/recipefinder.png";
 import projectsHeader from "@/assets/projects-portfolio.png";
 import favouriteSong from "@/assets/favourite-song.mp3";
@@ -87,7 +87,7 @@ const projectItems = [
     tags: ["TypeScript", "Javascript", "CSS"],
     description:
       "My personal website for sharing my projects, experiences, and photos.",
-    imageUrl: p1,
+    imageUrl: personalWebsiteImage,
     hasVideo: false,
     liveUrl: "https://github.com/srijac9/meet-sri",
   },
