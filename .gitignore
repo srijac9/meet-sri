@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local browser/debug artifacts
+.chrome-headless/
+.edge-debug/
+.edge-headless/
+cdp-photos*.png
+photos-route*.png

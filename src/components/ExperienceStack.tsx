@@ -44,8 +44,8 @@ const TAPES: TapeData[] = [
     expandable: false,
   },
   {
-    label: "FRONTEND",
-    sub: "TECH CORP - 2017-2019",
+    label: "Spirit of Math",
+    sub: "SEPT 2022-JUNE 2024",
     shell: "#0c0909",
     spineBg: "#140f10",
     titleColor: "#c53d3d",
@@ -53,14 +53,18 @@ const TAPES: TapeData[] = [
     accent: "#c65d59",
     stamp: "EP",
     expandable: true,
-    role: "Frontend Developer",
-    company: "Tech Corp",
-    years: "2017-2019",
+    role: "Assistant Teacher",
+    company: "Spirit of Math Schools",
+    years: "Sept 2022-June 2024",
     description:
-      "Built responsive web applications and component libraries. Collaborated with design teams to implement polished interfaces.",
-    mixtapeNote: "crafting interfaces + making systems feel polished",
-    tech: ["React", "TypeScript", "Sass", "Jest"],
-    achievements: ["Reduced bundle size by 40%", "Led migration to TypeScript", "Built a design system"],
+      "Guided elementary students through drills, lessons, and homework support that strengthened problem-solving skills while keeping the classroom encouraging and safe.",
+    mixtapeNote: "teaching problem-solving + building confidence",
+    tech: ["Student Support", "Lesson Support", "Problem Solving", "Parent Communication"],
+    achievements: [
+      "Guided 90+ students in grades one to four twice weekly through drills, lessons, and homework support",
+      "Built a safe and supportive learning environment while helping students grow their confidence in math",
+      "Collaborated with parents to track progress, discuss challenges, and suggest improvement strategies at home",
+    ],
   },
   {
     label: "CONTRACT",
@@ -85,8 +89,8 @@ const TAPES: TapeData[] = [
     expandable: false,
   },
   {
-    label: "SENIOR",
-    sub: "FINTECH - 2020-2023",
+    label: "Trexo Robotics",
+    sub: "MAY-AUG 2025",
     shell: "#070606",
     spineBg: "#100c0d",
     titleColor: "#f4ece3",
@@ -94,14 +98,18 @@ const TAPES: TapeData[] = [
     accent: "#7e3233",
     stamp: "EP",
     expandable: true,
-    role: "Senior Software Engineer",
-    company: "Fintech Inc",
-    years: "2020-2023",
+    role: "Business Automation Intern",
+    company: "Trexo Robotics",
+    years: "May 2025-August 2025",
     description:
-      "Architected backend systems and led a team of engineers working on payment processing and reliability improvements.",
-    mixtapeNote: "shipping reliable systems + mentoring through scale",
-    tech: ["Node.js", "Go", "PostgreSQL", "AWS", "Docker"],
-    achievements: ["Scaled to 1M+ transactions/day", "Mentored junior engineers", "Reduced latency by 60%"],
+      "Worked across data, reporting, and automation to turn manual processes into scalable systems that helped teams move faster and make better decisions.",
+    mixtapeNote: "automation, analytics + cross-team execution",
+    tech: ["SQL", "AWS Athena", "Amazon QuickSight", "JavaScript", "Python", "Zapier"],
+    achievements: [
+      "Extracted, manipulated, and analyzed large datasets with SQL and AWS Athena, then built a partner dashboard in Amazon QuickSight",
+      "Automated 10 workflows across multiple teams using JavaScript, Python, and Zapier to reduce manual effort and standardize operations",
+      "Led a major automation rollout by managing timelines, coordinating cross-functional teams, and delivering the final processes successfully",
+    ],
   },
   {
     label: "SIDE GIG",
@@ -126,8 +134,8 @@ const TAPES: TapeData[] = [
     expandable: false,
   },
   {
-    label: "TECH LEAD",
-    sub: "CURRENT - 2023-NOW",
+    label: "Mission Perform",
+    sub: "JAN 2026-PRESENT",
     shell: "#0a0808",
     spineBg: "#110e0f",
     titleColor: "#efe2cf",
@@ -135,14 +143,18 @@ const TAPES: TapeData[] = [
     accent: "#9c3535",
     stamp: "EP",
     expandable: true,
-    role: "Technical Lead",
-    company: "Current Co",
-    years: "2023-Present",
+    role: "Full Stack Developer Intern",
+    company: "Mission Perform Inc",
+    years: "January 2026-Present",
     description:
-      "Leading platform architecture, engineering culture, and AI-focused initiatives while helping the team scale with stronger systems.",
-    mixtapeNote: "architecting systems + scaling teams",
-    tech: ["Next.js", "Python", "Kubernetes", "OpenAI", "Terraform"],
-    achievements: ["Built AI feature for 500K users", "Established engineering standards", "Grew team from 4 to 12"],
+      "Built and shipped full-stack product features while designing automation systems that connected business tools, backend services, and cloud infrastructure.",
+    mixtapeNote: "full-stack features + cloud automation",
+    tech: ["JavaScript", "React", "Node.js", "MongoDB", "AWS Lambda", "EventBridge Scheduler", "AWS EC2"],
+    achievements: [
+      "Architected and deployed full-stack web application features using JavaScript, React, Node.js, and MongoDB",
+      "Designed an automated SharePoint synchronization pipeline with AWS Lambda and EventBridge Scheduler to keep systems in sync and remove manual entry",
+      "Developed backend services on AWS EC2 to support scheduled automation tasks and API-driven data synchronization",
+    ],
   },
   {
     label: "NEXT",
@@ -169,13 +181,13 @@ const PROMPT_TAPE: TapeData = {
   expandable: false,
 };
 
-const EXPANDABLE_SLIDE_DISTANCE = 1.45;
+const EXPANDABLE_SLIDE_DISTANCE = 1.1;
 const STANDARD_HOVER_SHIFT = 0.18;
 const STACK_SHIFT_AFTER_HOVER = 0.26;
-const EXPANDABLE_HITBOX_WIDTH = 2.15;
-const EXPANDABLE_HITBOX_HEIGHT = 2.3;
-const EXPANDABLE_HITBOX_DEPTH = 1.2;
 const HOVER_RELEASE_DELAY_MS = 180;
+const CASSETTE_TITLE_FONT_STACK = `"Franklin Gothic Demi", "Arial Narrow", Arial, sans-serif`;
+const CASSETTE_SUBTITLE_FONT_STACK = `"Franklin Gothic Medium", Arial, sans-serif`;
+const PROMPT_CASSETTE_FONT_STACK = `'Caveat', cursive`;
 
 const EXPANDABLE_TAPE_DIRECTIONS = TAPES.reduce<Record<number, -1 | 1>>((directions, tape, index) => {
   if (tape.expandable) {
@@ -211,6 +223,22 @@ function getStackHorizontalOffset(viewportWidth: number) {
   }
 
   return 0;
+}
+
+function getRenderedTitleColor(tape: TapeData) {
+  return tape.expandable ? "#f4ece3" : "#b84a43";
+}
+
+function shouldRenderCassetteSubtitle(tape: TapeData) {
+  return tape === PROMPT_TAPE;
+}
+
+function getCassetteTitleFontStack(tape: TapeData) {
+  return tape === PROMPT_TAPE ? PROMPT_CASSETTE_FONT_STACK : CASSETTE_TITLE_FONT_STACK;
+}
+
+function getCassetteSubtitleFontStack(tape: TapeData) {
+  return tape === PROMPT_TAPE ? PROMPT_CASSETTE_FONT_STACK : CASSETTE_SUBTITLE_FONT_STACK;
 }
 
 function fitText(
@@ -292,38 +320,31 @@ function drawStamp(ctx: CanvasRenderingContext2D, width: number, tape: TapeData)
   ctx.textAlign = "left";
 }
 
-function drawExtendedPlayMarker(
+function drawExpandableArrow(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
-  width: number,
-  height: number,
-  tape: TapeData
+  color: string,
+  scale = 1
 ) {
-  if (!tape.expandable) {
-    return;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.globalAlpha = 0.9;
+  ctx.fillStyle = color;
+
+  for (let index = 0; index < 3; index += 1) {
+    const offset = index * 11;
+    ctx.beginPath();
+    ctx.moveTo(18 - offset, -10);
+    ctx.lineTo(-2 - offset, 0);
+    ctx.lineTo(18 - offset, 10);
+    ctx.lineTo(12 - offset, 0);
+    ctx.closePath();
+    ctx.fill();
   }
 
-  ctx.fillStyle = "rgba(239,226,207,0.1)";
-  ctx.beginPath();
-  ctx.roundRect(x, y, width, height, 18);
-  ctx.fill();
-
-  ctx.strokeStyle = `${tape.accent}cc`;
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.roundRect(x, y, width, height, 18);
-  ctx.stroke();
-
-  ctx.fillStyle = "#fff6eb";
-  ctx.font = '700 26px Arial, sans-serif';
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.shadowColor = "rgba(0,0,0,0.3)";
-  ctx.shadowBlur = 2;
-  ctx.fillText("EXTENDED PLAY", x + width / 2, y + height / 2 + 2);
-  ctx.textAlign = "left";
-  ctx.shadowBlur = 0;
+  ctx.restore();
 }
 
 function makeTapeTexture(tape: TapeData, isActive: boolean) {
@@ -371,35 +392,47 @@ function makeTapeTexture(tape: TapeData, isActive: boolean) {
   ctx.stroke();
 
   drawStamp(ctx, width, tape);
-  drawExtendedPlayMarker(ctx, spineX + 48, spineY + 34, 272, 68, tape);
-
-  const titleFont = (size: number) => `900 ${size}px "Arial Narrow", Arial, sans-serif`;
+  const titleFont = (size: number) => `700 ${size}px ${getCassetteTitleFontStack(tape)}`;
   const titleSize = fitText(ctx, tape.label, spineWidth - 140, height * 0.2, titleFont);
+  const showSubtitle = shouldRenderCassetteSubtitle(tape);
 
   ctx.save();
-  ctx.translate(width / 2, height * 0.44);
-  ctx.scale(0.94, 1.22);
+  ctx.translate(width / 2, height * (showSubtitle ? 0.44 : 0.5));
+  ctx.scale(tape === PROMPT_TAPE ? 1 : 0.98, tape === PROMPT_TAPE ? 1.18 : 1.28);
   ctx.font = titleFont(titleSize);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.shadowColor = "rgba(0,0,0,0.42)";
   ctx.shadowBlur = 5;
   ctx.shadowOffsetY = 2;
-  ctx.fillStyle = isActive ? tape.titleColor : `${tape.titleColor}d2`;
+  const renderedTitleColor = getRenderedTitleColor(tape);
+  ctx.fillStyle = isActive ? renderedTitleColor : `${renderedTitleColor}d2`;
   ctx.fillText(tape.label, 0, 0);
   ctx.restore();
 
-  const subFont = (size: number) => `800 ${size}px "Arial Narrow", Arial, sans-serif`;
-  const subSize = fitText(ctx, tape.sub, spineWidth - 190, height * 0.088, subFont);
-  ctx.save();
-  ctx.translate(width / 2, height * 0.565);
-  ctx.scale(0.98, 1.08);
-  ctx.font = subFont(subSize);
-  ctx.textAlign = "center";
-  ctx.textBaseline = "middle";
-  ctx.fillStyle = isActive ? "#f5ddd1" : "rgba(245,221,209,0.82)";
-  ctx.fillText(tape.sub, 0, 0, spineWidth - 190);
-  ctx.restore();
+  if (tape.expandable) {
+    drawExpandableArrow(
+      ctx,
+      spineX + 58,
+      spineY + spineHeight / 2,
+      isActive ? renderedTitleColor : `${renderedTitleColor}cc`,
+      0.78
+    );
+  }
+
+  if (showSubtitle) {
+    const subFont = (size: number) => `700 ${size}px ${getCassetteSubtitleFontStack(tape)}`;
+    const subSize = fitText(ctx, tape.sub, spineWidth - 190, height * 0.088, subFont);
+    ctx.save();
+    ctx.translate(width / 2, height * 0.565);
+    ctx.scale(1, tape === PROMPT_TAPE ? 1.04 : 1.08);
+    ctx.font = subFont(subSize);
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = isActive ? "#f5ddd1" : "rgba(245,221,209,0.82)";
+    ctx.fillText(tape.sub, 0, 0, spineWidth - 190);
+    ctx.restore();
+  }
 
   ctx.strokeStyle = isActive ? `${tape.accent}bb` : `${tape.accent}66`;
   ctx.lineWidth = 3;
@@ -436,50 +469,30 @@ function makeSideTexture(tape: TapeData) {
   ctx.fillRect(24, height * 0.15, 12, height * 0.7);
   ctx.fillRect(width - 36, height * 0.15, 12, height * 0.7);
 
-  if (tape.expandable) {
-    ctx.fillStyle = "rgba(239,226,207,0.12)";
-    ctx.beginPath();
-    ctx.roundRect(width - 420, 22, 220, 30, 10);
-    ctx.fill();
-
-    ctx.strokeStyle = `${tape.accent}cc`;
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.roundRect(width - 420, 22, 220, 30, 10);
-    ctx.stroke();
-
-    ctx.fillStyle = "#fff6eb";
-    ctx.font = `700 ${height * 0.16}px "Special Elite", Arial, sans-serif`;
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.shadowColor = "rgba(0,0,0,0.24)";
-    ctx.shadowBlur = 2;
-    ctx.fillText("EXTENDED PLAY", width - 310, 37);
-    ctx.textAlign = "left";
-    ctx.shadowBlur = 0;
-  }
-
   ctx.strokeStyle = "rgba(239,226,207,0.24)";
   ctx.lineWidth = 3;
   ctx.strokeRect(10, 10, width - 20, height - 20);
 
-  ctx.font = `900 ${height * 0.4}px "Arial Narrow", Arial, sans-serif`;
-  ctx.textAlign = "left";
+  ctx.font = `700 ${height * 0.4}px ${getCassetteTitleFontStack(tape)}`;
+  const showSubtitle = shouldRenderCassetteSubtitle(tape);
+  ctx.textAlign = showSubtitle ? "left" : "center";
   ctx.textBaseline = "middle";
   ctx.shadowColor = "rgba(0,0,0,0.35)";
   ctx.shadowBlur = 3;
-  ctx.fillStyle = tape.titleColor;
+  ctx.fillStyle = getRenderedTitleColor(tape);
   ctx.save();
-  ctx.translate(54, height * 0.49);
-  ctx.scale(0.94, 1.18);
+  ctx.translate(showSubtitle ? 54 : width / 2, height * 0.49);
+  ctx.scale(tape === PROMPT_TAPE ? 1 : 0.98, tape === PROMPT_TAPE ? 1.14 : 1.24);
   ctx.fillText(tape.label, 0, 0);
   ctx.restore();
   ctx.shadowBlur = 0;
 
-  const titleWidth = ctx.measureText(tape.label).width;
-  ctx.font = `800 ${height * 0.22}px "Arial Narrow", Arial, sans-serif`;
-  ctx.fillStyle = "#f5ddd1";
-  ctx.fillText(` - ${tape.sub}`, 60 + titleWidth, height * 0.49, width - titleWidth - 190);
+  if (showSubtitle) {
+    const titleWidth = ctx.measureText(tape.label).width;
+    ctx.font = `700 ${height * 0.22}px ${getCassetteSubtitleFontStack(tape)}`;
+    ctx.fillStyle = "#f5ddd1";
+    ctx.fillText(` - ${tape.sub}`, 60 + titleWidth, height * 0.49, width - titleWidth - 190);
+  }
 
   if (tape.stamp) {
     ctx.fillStyle = tape.accent;
@@ -540,26 +553,26 @@ function makePromptFaceTexture(tape: TapeData) {
 
   drawStamp(ctx, width, tape);
 
-  const titleFont = (size: number) => `900 ${size}px "Arial Narrow", Arial, sans-serif`;
+  const titleFont = (size: number) => `700 ${size}px ${getCassetteTitleFontStack(tape)}`;
   const titleSize = fitText(ctx, tape.label, labelWidth - 120, 140, titleFont);
   ctx.save();
   ctx.translate(width / 2, height * 0.50);
-  ctx.scale(0.94, 1.16);
+  ctx.scale(tape === PROMPT_TAPE ? 1 : 0.98, tape === PROMPT_TAPE ? 1.1 : 1.18);
   ctx.font = titleFont(titleSize);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
   ctx.shadowColor = "rgba(0,0,0,0.42)";
   ctx.shadowBlur = 5;
   ctx.shadowOffsetY = 2;
-  ctx.fillStyle = tape.titleColor;
+  ctx.fillStyle = getRenderedTitleColor(tape);
   ctx.fillText(tape.label, 0, -22);
   ctx.restore();
 
-  const subFont = (size: number) => `800 ${size}px "Arial Narrow", Arial, sans-serif`;
+  const subFont = (size: number) => `700 ${size}px ${getCassetteSubtitleFontStack(tape)}`;
   const subSize = fitText(ctx, tape.sub, labelWidth - 160, 68, subFont);
   ctx.save();
   ctx.translate(width / 2, height * 0.60);
-  ctx.scale(0.98, 1.08);
+  ctx.scale(1, 1.04);
   ctx.font = subFont(subSize);
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
@@ -641,11 +654,11 @@ function ExpandedPanel({
         >
           TRACK {trackNumber}
         </div>
-        <div className="mt-3 text-[2rem] font-black leading-none" style={{ color: panelAccent }}>
+        <div className="mt-3 text-[2.4rem] font-black leading-none md:text-[2.8rem] lg:text-[3.15rem]" style={{ color: panelAccent }}>
           {tape.role}
         </div>
         {tape.mixtapeNote ? (
-          <div className="mt-2 font-handwritten text-[1.05rem] leading-snug" style={{ color: "#b3665f" }}>
+          <div className="mt-2 font-handwritten text-[1.15rem] leading-snug md:text-[1.3rem]" style={{ color: "#b3665f" }}>
             "{tape.mixtapeNote}"
           </div>
         ) : null}
@@ -658,11 +671,11 @@ function ExpandedPanel({
               boxShadow: "0 8px 18px rgba(124, 53, 49, 0.06)",
             }}
           >
-            <div className="text-[1.02rem] font-semibold leading-none" style={{ color: panelAccent }}>
+            <div className="text-[1.1rem] font-semibold leading-none md:text-[1.22rem]" style={{ color: panelAccent }}>
               {tape.company} ♥
             </div>
           </div>
-          <div className="pb-1 text-sm font-semibold tracking-[0.08em]" style={{ color: "#8a6861" }}>
+          <div className="pb-1 text-[1rem] font-semibold tracking-[0.08em] md:text-[1.1rem]" style={{ color: "#8a6861" }}>
             {tape.years}
           </div>
         </div>
@@ -673,25 +686,25 @@ function ExpandedPanel({
         />
       </div>
 
-      <div className="relative space-y-4 px-6 pb-5 pt-3" style={{ color: panelBody }}>
+      <div className="relative mt-3 space-y-4 px-6 pb-5 pt-3" style={{ color: panelBody }}>
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute left-4 top-3 font-handwritten text-3xl"
+          className="pointer-events-none absolute left-4 top-3 font-handwritten text-4xl"
           style={{ color: "rgba(124, 53, 49, 0.22)" }}
         >
           xoxo
         </div>
-        <p className="pr-5 text-[15px] leading-7">{tape.description}</p>
+        <p className="max-w-[38rem] pr-6 text-[17px] leading-8 md:text-[18px]">{tape.description}</p>
 
         <div className="rotate-[-1deg]">
-          <div className="mb-2 text-[11px] font-semibold tracking-[0.22em]" style={{ color: panelAccentSoft }}>
+          <div className="mb-2 text-[12px] font-semibold tracking-[0.24em]" style={{ color: panelAccentSoft }}>
             TECH STACK ✧
           </div>
           <div className="flex flex-wrap gap-2">
             {tape.tech?.map((tech) => (
               <span
                 key={tech}
-                className="rounded-full px-3 py-1.5 text-[12px] font-semibold"
+                className="rounded-full px-3.5 py-2 text-[13px] font-semibold md:text-[14px]"
                 style={{
                   background: "rgba(124, 53, 49, 0.08)",
                   color: panelAccent,
@@ -705,12 +718,12 @@ function ExpandedPanel({
         </div>
 
         <div className="translate-x-1 rotate-[1deg]">
-          <div className="mb-2 text-[11px] font-semibold tracking-[0.22em]" style={{ color: panelAccentSoft }}>
+          <div className="mb-2 text-[12px] font-semibold tracking-[0.24em]" style={{ color: panelAccentSoft }}>
             NOTES ♡
           </div>
           <ul className="space-y-2">
             {tape.achievements?.map((achievement, index) => (
-              <li key={achievement} className="flex items-start gap-3 text-[13px]">
+              <li key={achievement} className="flex items-start gap-3 text-[15px] leading-7">
                 <span className="mt-[2px] text-sm font-semibold" style={{ color: panelAccent }}>
                   {noteIcons[index % noteIcons.length]}
                 </span>
@@ -719,6 +732,32 @@ function ExpandedPanel({
             ))}
           </ul>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function EmptyPanel() {
+  return (
+    <div className="pointer-events-none absolute left-4 top-[28rem] z-10 w-[22rem] px-6 md:left-8 md:top-[31rem] md:w-[25rem] lg:left-10 lg:top-[33rem] lg:w-[27rem]">
+      <div>
+        <div
+          className="font-handwritten text-[1.15rem] tracking-[0.08em]"
+          style={{ color: "#9c3535" }}
+        >
+          PRESS PLAY
+        </div>
+        <p
+          className="mt-3 font-handwritten text-[1.45rem] leading-[1.75] md:text-[1.6rem]"
+          style={{
+            color: "#9c3535",
+            textShadow: "0 10px 22px rgba(156, 53, 53, 0.12)",
+          }}
+        >
+          Click a cassette to open a chapter from the stack. When one is selected,
+          this space fills with the role, the time period, the tech I used, and a
+          few notes from that part of the journey.
+        </p>
       </div>
     </div>
   );
@@ -818,10 +857,10 @@ const ExperienceStack = () => {
     fillLight.position.set(-4, 2, 3);
     scene.add(fillLight);
 
-    const tapeWidth = 2.9;
-    const tapeHeight = 0.3;
-    const tapeDepth = 1.7;
-    const tapeGap = 0.03;
+    const tapeWidth = 2.66;
+    const tapeHeight = 0.36;
+    const tapeDepth = 1.56;
+    const tapeGap = 0.04;
     const stackHeight = TAPES.length * (tapeHeight + tapeGap);
     const baseY = -stackHeight / 2;
 
@@ -838,8 +877,9 @@ const ExperienceStack = () => {
 
     const group = new THREE.Group();
     group.rotation.z = -0.03;
+    group.scale.setScalar(0.94);
     group.position.x = getStackHorizontalOffset(width);
-    group.position.y = -1.05;
+    group.position.y = -0.85;
     scene.add(group);
 
     TAPES.forEach((tape, index) => {
@@ -869,28 +909,6 @@ const ExperienceStack = () => {
       mesh.rotation.z = (Math.random() - 0.5) * 0.11;
       mesh.rotation.y = (Math.random() - 0.5) * 0.035;
       mesh.rotation.x = (Math.random() - 0.5) * 0.02;
-
-      if (tape.expandable) {
-        const hitboxGeometry = new THREE.BoxGeometry(
-          tapeWidth * EXPANDABLE_HITBOX_WIDTH,
-          tapeHeight * EXPANDABLE_HITBOX_HEIGHT,
-          tapeDepth * EXPANDABLE_HITBOX_DEPTH
-        );
-        const hitboxMaterial = new THREE.MeshBasicMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0,
-          depthWrite: false,
-        });
-        const hitbox = new THREE.Mesh(hitboxGeometry, hitboxMaterial);
-        hitbox.userData = { index };
-        hitbox.renderOrder = -1;
-        hitbox.position.x =
-          (EXPANDABLE_SLIDE_DISTANCE * getExpandableDirection(index)) / 2;
-        mesh.add(hitbox);
-        geometriesToDispose.push(hitboxGeometry);
-        materialsToDispose.push(hitboxMaterial);
-      }
 
       const y = baseY + index * (tapeHeight + tapeGap) + tapeHeight / 2;
       const xOffset = 0.04 + Math.random() * 0.08;
@@ -962,17 +980,32 @@ const ExperienceStack = () => {
 
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
-    const onMouseMove = (event: MouseEvent) => {
+    const getTapeIndexFromPointer = (event: MouseEvent) => {
       const rect = element.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
 
-      const hits = raycaster.intersectObjects(meshes, true);
-      const nextHovered =
+      const hits = raycaster.intersectObjects(meshes, false);
+      const hitIndex =
         hits.length > 0
-          ? ((hits[0].object.userData.index ?? hits[0].object.parent?.userData.index) as number | null)
+          ? (hits[0].object.userData.index as number | null)
           : null;
+      const isExpandableHit = hitIndex !== null ? TAPES[hitIndex].expandable : false;
+
+      return { hits, hitIndex, isExpandableHit };
+    };
+
+    const onMouseMove = (event: MouseEvent) => {
+      if (expandedRef.current !== null) {
+        hoveredRef.current = expandedRef.current;
+        setHovered(expandedRef.current);
+        applyTapeTextureState(expandedRef.current, expandedRef.current);
+        element.style.cursor = "default";
+        return;
+      }
+
+      const { hits, hitIndex: nextHovered, isExpandableHit } = getTapeIndexFromPointer(event);
 
       if (nextHovered !== null) {
         clearHoverReleaseTimeout();
@@ -999,23 +1032,32 @@ const ExperienceStack = () => {
       }
 
       if (hits.length > 0) {
-        element.style.cursor = TAPES[nextHovered as number].expandable ? "pointer" : "default";
+        element.style.cursor = isExpandableHit ? "pointer" : "default";
       } else {
         element.style.cursor = "default";
       }
     };
 
-    const onClick = () => {
-      if (hoveredRef.current === null) {
+    const onClick = (event: MouseEvent) => {
+      if (expandedRef.current !== null) {
         return;
       }
 
-      const tape = TAPES[hoveredRef.current];
+      const { hitIndex, isExpandableHit } = getTapeIndexFromPointer(event);
+      if (hitIndex === null || !isExpandableHit) {
+        return;
+      }
+
+      hoveredRef.current = hitIndex;
+      setHovered(hitIndex);
+      applyTapeTextureState(hitIndex, expandedRef.current);
+
+      const tape = TAPES[hitIndex];
       if (!tape.expandable) {
         return;
       }
 
-      setExpanded((current) => (current === hoveredRef.current ? null : hoveredRef.current));
+      setExpanded((current) => (current === hitIndex ? null : hitIndex));
     };
 
     let rotationY = 0;
@@ -1160,16 +1202,18 @@ const ExperienceStack = () => {
   const expandedTape = expanded !== null ? TAPES[expanded] : null;
   const expandedTrackNumber =
     expanded !== null ? String(getExpandableTrackNumber(expanded)).padStart(2, "0") : "01";
+  const pageHeight = expandedTape ? "calc(100vh + 38rem)" : "calc(100vh + 24rem)";
   return (
     <div
-      className="relative min-h-screen overflow-x-hidden overflow-y-visible"
+      className="relative min-h-screen overflow-x-clip overflow-y-visible"
       style={{
         fontFamily: "Arial, sans-serif",
-        minHeight: expandedTape ? "calc(100vh + 24rem)" : undefined,
+        minHeight: pageHeight,
       }}
     >
       <div
-        className="h-screen w-full overflow-visible md:absolute md:inset-y-0 md:left-[10rem] md:right-0 md:w-auto lg:left-[12rem] xl:left-[14rem]"
+        className="w-full overflow-visible md:absolute md:inset-y-0 md:left-[10rem] md:right-0 md:w-auto lg:left-[12rem] xl:left-[14rem]"
+        style={{ height: pageHeight }}
       >
         <div ref={mountRef} className="h-full w-full" />
       </div>
@@ -1179,7 +1223,9 @@ const ExperienceStack = () => {
           trackNumber={expandedTrackNumber}
           onClose={() => setExpanded(null)}
         />
-      ) : null}
+      ) : (
+        <EmptyPanel />
+      )}
     </div>
   );
 };

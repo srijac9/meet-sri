@@ -1,7 +1,9 @@
 ﻿import { useNavigate } from "react-router-dom";
 import { useEffect, useRef } from "react";
+import projectsCollage from "@/assets/projects-collage.png";
 import photosCollage from "@/assets/photos-collage.png";
 import aboutCollage from "@/assets/about-collage.png";
+import experienceCollage from "@/assets/experience-collage.png";
 import discCollage from "@/assets/disc-collage.svg";
 import projectsTitle from "@/assets/projects.png";
 import experienceTitle from "@/assets/experience.png";
@@ -10,9 +12,10 @@ import aboutTitle from "@/assets/about-title.png";
 
 interface RotatingDiscProps {
   isPlaying: boolean;
+  onSectionSelect?: (section: "projects" | "experience" | "photos" | "about") => void;
 }
 
-const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
+const RotatingDisc = ({ isPlaying, onSectionSelect }: RotatingDiscProps) => {
   const navigate = useNavigate();
   const rotationRef = useRef(0);
   const rafRef = useRef<number | null>(null);
@@ -22,13 +25,22 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
   const discRef = useRef<HTMLDivElement | null>(null);
   const projectsBaseTransform = "scale(1.20)";
   const projectsHoverTransform = "scale(1.30)";
-  const experienceBaseTransform = "scale(2.20)";
-  const experienceHoverTransform = "scale(2.375)";
+  const experienceBaseTransform = "scale(1.25)";
+  const experienceHoverTransform = "scale(1.35)";
   const photosBaseTransform = "translateY(5.5rem) scale(1.35)";
   const photosHoverTransform = "translateY(5.9rem) scale(1.45)";
   const cornerTextSharedStyles = {
     textShadow: "0 2px 8px rgba(0,0,0,0.7)",
   } as const;
+
+  const handleSelect = (section: "projects" | "experience" | "photos" | "about") => {
+    if (onSectionSelect) {
+      onSectionSelect(section);
+      return;
+    }
+
+    navigate(`/${section}`);
+  };
 
   useEffect(() => {
     const applyRotation = (rotation: number) => {
@@ -249,6 +261,31 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             }}
           />
 
+          {/* Projects collage (top-left) */}
+          <div
+            className="absolute"
+            style={{
+              top: 0,
+              left: 0,
+              width: "50%",
+              height: "50%",
+              pointerEvents: "none",
+              zIndex: 4,
+            }}
+          >
+            <img
+              src={projectsCollage}
+              alt="Projects collage"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                filter: "brightness(0.68)",
+                transform: "translate(6rem, 7rem) scale(2.5)",
+              }}
+            />
+          </div>
+
           {/* Photos collage (top-right) */}
           <div
             className="absolute"
@@ -268,6 +305,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
+                filter: "brightness(0.68)",
                 transform: "translate(-1.05rem, 14.175rem) scale(2.5)",
               }}
             />
@@ -292,7 +330,33 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
                 width: "100%",
                 height: "100%",
                 objectFit: "contain",
+                filter: "brightness(0.68)",
                 transform: "translate(-1.25rem, -3.6rem) scale(2.5)",
+              }}
+            />
+          </div>
+
+          {/* Experience collage (bottom-left) */}
+          <div
+            className="absolute"
+            style={{
+              top: "50%",
+              left: 0,
+              width: "50%",
+              height: "50%",
+              pointerEvents: "none",
+              zIndex: 4,
+            }}
+          >
+            <img
+              src={experienceCollage}
+              alt="Experience collage"
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+                filter: "brightness(0.68)",
+                transform: "translate(6rem, 4.93rem) scale(2.5)",
               }}
             />
           </div>
@@ -318,7 +382,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
           {/* PROJECTS BUTTON */}
           <button
             type="button"
-            onClick={() => navigate("/projects")}
+            onClick={() => handleSelect("projects")}
             onMouseEnter={(e) => {
               const img = e.currentTarget.querySelector("img");
               if (!img) return;
@@ -333,7 +397,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             }}
             className="absolute group"
             style={{
-              top: "38%",
+              top: "36%",
               left: "32%",
               transform: "translate(-50%, -50%)",
               zIndex: 6,
@@ -368,7 +432,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
           {/* EXPERIENCE BUTTON */}
           <button
             type="button"
-            onClick={() => navigate("/experience")}
+            onClick={() => handleSelect("experience")}
             onMouseEnter={(e) => {
               const img = e.currentTarget.querySelector("img");
               if (!img) return;
@@ -383,7 +447,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
             }}
             className="absolute group"
             style={{
-              top: "62.5%",
+              top: "67%",
               left: "29.5%",
               transform: "translate(-50%, -50%)",
               zIndex: 6,
@@ -418,7 +482,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
           {/* PHOTOS BUTTON */}
           <button
             type="button"
-            onClick={() => navigate("/photos")}
+            onClick={() => handleSelect("photos")}
             onMouseEnter={(e) => {
               const img = e.currentTarget.querySelector("img");
               if (!img) return;
@@ -469,7 +533,7 @@ const RotatingDisc = ({ isPlaying }: RotatingDiscProps) => {
           {/* ABOUT BUTTON */}
           <button
             type="button"
-            onClick={() => navigate("/about")}
+            onClick={() => handleSelect("about")}
             onMouseEnter={(e) => {
               const img = e.currentTarget.querySelector("img");
               if (!img) return;

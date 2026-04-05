@@ -94,11 +94,19 @@
 }
 
 @layer base {
-  html,
-  body,
-  #root {
+  html {
+    min-height: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body,
+  #root {
+    min-height: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: clip;
   }
 
   * {

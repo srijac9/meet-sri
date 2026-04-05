@@ -532,7 +532,7 @@ const SubtleAudioBackdrop = ({
       <canvas ref={canvasRef} className="absolute left-0 pointer-events-none" />
 
       {/* Overlay UI (matches your �Now Playing� vibe) */}
-      <div className="relative z-10 flex h-full flex-col justify-between p-6">
+      <div className="relative z-30 flex h-full flex-col justify-between p-6">
         <div className="pointer-events-none select-none">
           {title ? (
             <h2
@@ -545,10 +545,10 @@ const SubtleAudioBackdrop = ({
           {subtitle ? <p className="mt-1 text-sm text-white/70">{subtitle}</p> : null}
         </div>
 
-        <div className={`flex items-center justify-center ${controlsClassName}`.trim()}>
+        <div className={`relative z-40 flex items-center justify-center ${controlsClassName}`.trim()}>
           <button
             onClick={togglePlay}
-            className="h-14 w-14 rounded-full bg-[#F5E6DA] text-[#1A0A0B] flex items-center justify-center shadow-xl active:scale-95 transition"
+            className="relative z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#F5E6DA] text-[#1A0A0B] shadow-xl transition active:scale-95"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
             {isPlaying ? <Pause size={20} strokeWidth={2.3} /> : <Play size={20} strokeWidth={2.3} className="ml-0.5" />}

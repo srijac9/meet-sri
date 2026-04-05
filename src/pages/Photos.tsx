@@ -1,8 +1,11 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import PageEdgeShadow from "@/components/PageEdgeShadow";
-import Scene from "@/components/Scene";
 import galleryTitle from "@/assets/gallery-title-cropped.png";
+
+interface PhotosProps {
+  embedded?: boolean;
+}
 
 const galleryItems = [
   {
@@ -117,9 +120,66 @@ const galleryItems = [
     place: "Ontario 2025",
     body: "This was one of the first photos I took using my Canon SX740, and I was so impressed by the zoom on the camera.",
   },
+  {
+    id: 17,
+    image: "p17.JPG",
+    alt: "Gallery photo 17",
+    place: "Ottawa 2025",
+    body: "A new moment from the gallery that I wanted to keep in the collection.",
+  },
+  {
+    id: 18,
+    image: "p18.JPG",
+    alt: "Gallery photo 18",
+    place: "Vatican 2025",
+    body: "Another photo I added to the archive because I loved the feel of it.",
+  },
+  {
+    id: 19,
+    image: "p19.JPG",
+    alt: "Gallery photo 19",
+    place: "Rome 2025",
+    body: "One more memory from the camera roll that deserved a spot in the gallery.",
+  },
+  {
+    id: 20,
+    image: "p20.JPG",
+    alt: "Gallery photo 20",
+    place: "Rome 2025",
+    body: "I kept this one for the atmosphere and the little details in the frame.",
+  },
+  {
+    id: 21,
+    image: "p21.JPG",
+    alt: "Gallery photo 21",
+    place: "Florence 2025",
+    body: "This shot felt too good not to add to the set.",
+  },
+  {
+    id: 23,
+    image: "p23.JPG",
+    alt: "Gallery photo 23",
+    place: "Venice 2025",
+    body: "I added this one because the composition felt especially nice.",
+  },
+  {
+    id: 24,
+    image: "p24.JPG",
+    alt: "Gallery photo 24",
+    place: "Venice 2025",
+    body: "This frame had the kind of mood that belongs in the gallery.",
+  },
+  {
+    id: 26,
+    image: "p26.JPG",
+    alt: "Gallery photo 26",
+    place: "Burano 2025",
+    body: "I wanted to keep this one too, so it now has a place in the gallery.",
+  },
 ];
 
-const Photos = () => {
+const Photos = ({ embedded = false }: PhotosProps) => {
+  const Shell = embedded ? "div" : PageEdgeShadow;
   const [flippedCards, setFlippedCards] = useState<Set<number>>(new Set());
 
   const toggleCard = (id: number) => {
@@ -146,37 +206,35 @@ const Photos = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-burgundy-dark text-burgundy-dark">
-      <PageEdgeShadow className="relative mx-auto min-h-screen w-full max-w-[1380px] px-6 md:px-12 lg:px-16">
+    <div className={`min-h-screen text-burgundy-dark ${embedded ? "bg-transparent" : "bg-burgundy-dark"}`}>
+      <Shell
+        className={`relative min-h-screen w-full px-6 md:px-12 lg:px-16 ${embedded ? "" : "mx-auto max-w-[1380px]"}`}
+      >
         <header className="relative z-20 w-full overflow-visible">
-          <div className="relative aspect-[16/6] min-h-[260px] w-full overflow-hidden md:min-h-[320px]">
-            <Scene />
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-burgundy-dark/10 via-burgundy-dark/25 to-burgundy-dark/80" />
-          </div>
+          {!embedded ? (
+            <div className="relative z-20 pt-6">
+              <Link
+                to="/"
+                className="ml-5 mt-2 inline-flex rounded-full border border-paper/30 bg-background/65 px-4 py-2 text-lg font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
+              >
+                {"<"} back home
+              </Link>
+            </div>
+          ) : null}
 
-          <div className="absolute inset-x-0 top-6 z-20">
-            <Link
-              to="/"
-              className="ml-5 mt-2 inline-flex rounded-full border border-paper/30 bg-background/65 px-4 py-2 text-lg font-handwritten text-paper backdrop-blur-sm transition-colors hover:text-paper/80"
-            >
-              {"<"} back home
-            </Link>
-          </div>
-
-          <div className="pointer-events-none absolute inset-x-0 bottom-[-78px] z-30 md:bottom-[-96px]">
+          <div className="pointer-events-none relative z-30 pt-8 md:pt-12">
             <div className="text-center">
               <img
                 src={galleryTitle}
                 alt="Gallery"
                 className="mx-auto w-[24rem] max-w-[88vw] drop-shadow-[0_10px_22px_rgba(0,0,0,0.35)] md:w-[38rem]"
-                style={{ transform: "translateY(44px)" }}
               />
             </div>
           </div>
         </header>
 
-        <section className="relative z-10 -mt-2 bg-burgundy-dark md:-mt-4">
-          <div className="pt-10 md:pt-5">
+        <section className={`relative z-10 pt-8 md:pt-10 ${embedded ? "bg-transparent" : "bg-burgundy-dark"}`}>
+          <div>
             <div className="grid w-full grid-cols-2 gap-0 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
               {galleryItems.map((item) => (
                 <button
@@ -233,8 +291,8 @@ const Photos = () => {
           </div>
         </section>
 
-        <div className="h-12 bg-burgundy-dark md:h-16" aria-hidden="true" />
-      </PageEdgeShadow>
+        <div className={`h-12 md:h-16 ${embedded ? "bg-transparent" : "bg-burgundy-dark"}`} aria-hidden="true" />
+      </Shell>
     </div>
   );
 };
