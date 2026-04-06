@@ -289,6 +289,15 @@
     }
   }
 
+  @keyframes playlist-link-float {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-5px) scale(1.16);
+    }
+  }
+
   @keyframes scroll-line {
     0% {
       transform: translateY(-120%);

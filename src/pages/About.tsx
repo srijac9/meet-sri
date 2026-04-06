@@ -51,7 +51,7 @@ const About = ({ embedded = false }: AboutProps) => {
             <div className="pointer-events-none absolute inset-x-0 top-0 z-30 hidden overflow-visible xl:block">
               <div className="mx-auto max-w-[1280px]">
                 <div className="relative h-[23rem]">
-                  <div className="pointer-events-auto absolute right-[-5.5rem] top-[1.75rem] z-30 opacity-80 2xl:right-[-3.5rem]">
+                  <div className="pointer-events-auto absolute right-[-5.5rem] top-[-1.75rem] z-30 opacity-80 2xl:right-[-3.5rem]">
                     <SongFindFeature className="w-[63rem]" height={360} centerXOffset={-40} />
                   </div>
                 </div>

@@ -1,14 +1,17 @@
-import { Clock3, ExternalLink, Github, Play } from "lucide-react";
+import { Clock3, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import FloatingHearts from "@/components/FloatingHearts";
 import PageEdgeShadow from "@/components/PageEdgeShadow";
 import breadboardImage from "@/assets/breadboard.png";
 import dermacareImage from "@/assets/dermacare.png";
 import dillpklImage from "@/assets/dillpklImage.png";
+import devpostIconImage from "@/assets/devpost.png";
 import footprintImage from "@/assets/footprint.png";
+import githubIconImage from "@/assets/github.png";
 import iClickImage from "@/assets/iclick.png";
 import irrigationSystemImage from "@/assets/irrigationsystem.png";
 import personalWebsiteImage from "@/assets/personal-website.png";
+import playlistGif from "@/assets/playlist.gif";
 import recipeFinderImage from "@/assets/recipefinder.png";
 import projectsHeader from "@/assets/projects-portfolio.png";
 
@@ -20,7 +23,6 @@ interface ProjectItem {
   title: string;
   imageUrl: string;
   subtitle: string;
-  album: string;
   dateAdded: string;
   githubUrl?: string;
   devpostUrl?: string;
@@ -35,8 +37,8 @@ const projectItems: ProjectItem[] = [
   {
     title: "dill.pkl",
     imageUrl: dillpklImage,
-    subtitle: "Machine Learning, Python, LLM",
-    album: "AI Builds",
+    subtitle:
+      "An agent-based AutoML web app that automates and explains the end-to-end machine learning pipeline from raw data to deployment.",
     dateAdded: "Jan 2026",
     githubUrl: "https://github.com/srijac9/dill.pkl",
     devpostUrl: "https://devpost.com/software/dill-pkl",
@@ -45,8 +47,8 @@ const projectItems: ProjectItem[] = [
   {
     title: "iClick",
     imageUrl: iClickImage,
-    subtitle: "Python, Computer Vision, Machine Learning",
-    album: "Hackathon Projects",
+    subtitle:
+      "An accessibility app that enables hands-free computer navigation using eye tracking, blink gestures, and voice input.",
     dateAdded: "Dec 2025",
     githubUrl: "https://github.com/srijac9/iClick",
     devpostUrl: "https://devpost.com/software/iclick-4rynjv",
@@ -54,8 +56,8 @@ const projectItems: ProjectItem[] = [
   {
     title: "BREAD.board",
     imageUrl: breadboardImage,
-    subtitle: "Python, TypeScript, LLM",
-    album: "Hackathon Projects",
+    subtitle:
+      "An interactive learning tool that uses a live camera feed and real-time voice guidance to help users build circuits on a breadboard step by step.",
     dateAdded: "Nov 2025",
     githubUrl: "https://github.com/srijac9/nexhacks",
     devpostUrl: "https://devpost.com/software/circuit-build",
@@ -63,8 +65,8 @@ const projectItems: ProjectItem[] = [
   {
     title: "foot.print",
     imageUrl: footprintImage,
-    subtitle: "Python, Blender, Computer Vision",
-    album: "Hackathon Projects",
+    subtitle:
+      "An AI tool that redesigns your room using Feng Shui principles and generates a 3D layout from a video scan.",
     dateAdded: "Oct 2025",
     githubUrl: "https://github.com/srijac9/foot.print",
     devpostUrl: "https://devpost.com/software/foot-print",
@@ -73,8 +75,8 @@ const projectItems: ProjectItem[] = [
   {
     title: "DermaCare",
     imageUrl: dermacareImage,
-    subtitle: "Python, LLM, Web Scraping",
-    album: "Hackathon Projects",
+    subtitle:
+      "A skincare app that scans and analyzes product ingredients and provides AI-powered recommendations based on your skin type.",
     dateAdded: "Sep 2025",
     githubUrl: "https://github.com/srijac9/DermaCare",
     devpostUrl: "https://devpost.com/software/secret-project-m6s25w",
@@ -83,24 +85,24 @@ const projectItems: ProjectItem[] = [
   {
     title: "Soil Irrigation System",
     imageUrl: irrigationSystemImage,
-    subtitle: "Hardware, C, Microcontrollers",
-    album: "Embedded Builds",
+    subtitle:
+      "A microcontroller-based irrigation system that monitors soil moisture and automatically waters plants when needed.",
     dateAdded: "May 2024",
     githubUrl: "https://github.com/srijac9/Soil-Irrigation-System",
   },
   {
     title: "Recipe Finder",
     imageUrl: recipeFinderImage,
-    subtitle: "Python, Web Scraping",
-    album: "Personal Builds",
+    subtitle:
+      "A web app that finds recipes based on the user's cravings and desired ingredients.",
     dateAdded: "Jan 2024",
     devpostUrl: "https://devpost.com/software/recipe-finder-xed0oz",
   },
   {
     title: "meet sri",
     imageUrl: personalWebsiteImage,
-    subtitle: "TypeScript, CSS, Portfolio",
-    album: "Personal Builds",
+    subtitle:
+      "My personal website for sharing my projects, experiences, and photos.",
     dateAdded: "Mar 2026",
     githubUrl: "https://github.com/srijac9/meet-sri",
   },
@@ -111,25 +113,24 @@ const PlaylistRow = ({
   title,
   imageUrl,
   subtitle,
-  album,
   dateAdded,
   githubUrl,
   devpostUrl,
   videoUrl,
 }: PlaylistRowProps) => {
   return (
-    <div className="group grid grid-cols-[2.75rem_4.5rem_minmax(0,1.45fr)_minmax(0,0.85fr)_minmax(0,0.9fr)_4.25rem] items-center gap-4 px-4 py-3 transition-colors duration-300 hover:bg-[#7c1f26]/18 sm:grid-cols-[3.25rem_4.75rem_minmax(0,1.65fr)_minmax(0,1fr)_minmax(0,1fr)_5rem] sm:px-6 sm:py-4">
+    <div className="group relative grid grid-cols-[3.3rem_6.5rem_minmax(0,1.7fr)_minmax(0,0.9fr)_6.75rem] items-center gap-6 border border-transparent px-4 py-5 transition-all duration-300 ease-out hover:z-10 hover:-translate-y-1 hover:scale-[1.012] hover:border-[#f5e6d3]/10 hover:bg-[#892129]/24 hover:shadow-[0_24px_48px_rgba(34,4,6,0.34),0_0_26px_rgba(34,4,6,0.16)] sm:grid-cols-[4rem_7.25rem_minmax(0,2.15fr)_minmax(0,0.95fr)_9rem] sm:px-6 sm:py-6">
       <div className="flex items-center justify-center">
         {videoUrl ? (
           <a
             href={videoUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex size-9 items-center justify-center rounded-full border border-[#f5e6d3]/14 bg-[#f5e6d3]/8 text-paper/85 shadow-[0_10px_18px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-105 hover:bg-[#f5e6d3]/14 hover:text-paper"
+            className="flex size-11 items-center justify-center rounded-full border border-[#f5e6d3]/14 bg-[#f5e6d3]/8 text-paper/85 shadow-[0_10px_18px_rgba(0,0,0,0.2)] transition-all duration-300 hover:scale-105 hover:bg-[#f5e6d3]/14 hover:text-paper sm:size-12"
             title={`Play ${title}`}
             aria-label={`Play ${title} demo`}
           >
-            <Play className="ml-0.5 size-[1.2rem]" fill="currentColor" />
+            <Play className="ml-0.5 size-[1.45rem] sm:size-[1.55rem]" fill="currentColor" />
           </a>
         ) : (
           <span className="font-typewriter text-[1.05rem] tracking-[0.08em] text-paper/68 transition-colors duration-300 group-hover:text-paper/92">
@@ -141,36 +142,25 @@ const PlaylistRow = ({
       <img
         src={imageUrl}
         alt={title}
-        className="h-[4.1rem] w-[4.1rem] rounded-[0.45rem] object-cover shadow-[0_12px_24px_rgba(0,0,0,0.24)]"
+        className="h-[6.25rem] w-[6.25rem] rounded-[0.65rem] object-cover shadow-[0_14px_28px_rgba(0,0,0,0.26)] transition-all duration-300 ease-out group-hover:scale-[1.03] group-hover:shadow-[0_18px_36px_rgba(0,0,0,0.34)] sm:h-[7rem] sm:w-[7rem]"
         loading="lazy"
-        width={66}
-        height={66}
+        width={112}
+        height={112}
       />
 
       <div className="min-w-0">
-        <p className="truncate font-handwritten text-[1.9rem] leading-none text-paper sm:text-[2rem]">
+        <p className="truncate font-handwritten text-[2.35rem] leading-none text-paper transition-transform duration-300 ease-out group-hover:translate-x-1 sm:text-[2.7rem]">
           {title}
         </p>
-        <div className="mt-1 flex min-w-0 items-center gap-2 text-paper/62">
-          {videoUrl ? (
-            <span className="flex size-5 items-center justify-center rounded-[4px] border border-paper/25 bg-paper/5">
-              <Play className="ml-[1px] size-2.5" fill="currentColor" />
-            </span>
-          ) : null}
-          <p className="truncate font-sans text-[0.92rem] leading-tight text-paper/68 sm:text-[1rem]">
+        <div className="mt-1.5 min-w-0 text-paper/62">
+          <p className="overflow-hidden pb-0.5 font-sans text-[0.96rem] leading-[1.32] text-paper/68 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2] sm:text-[1.04rem] sm:leading-[1.36]">
             {subtitle}
           </p>
         </div>
       </div>
 
       <div className="min-w-0">
-        <p className="truncate font-sans text-[1rem] text-paper/68 sm:text-[1.05rem]">
-          {album}
-        </p>
-      </div>
-
-      <div className="min-w-0">
-        <span className="truncate font-sans text-[0.98rem] text-paper/72 sm:text-[1.02rem]">
+        <span className="truncate font-sans text-[1.12rem] text-paper/72 sm:text-[1.22rem]">
           {dateAdded}
         </span>
       </div>
@@ -181,11 +171,18 @@ const PlaylistRow = ({
             href={githubUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors duration-300 hover:text-paper"
+            className="focus-visible:outline-none"
             title="GitHub"
             aria-label={`Open ${title} on GitHub`}
           >
-            <Github className="size-[1.05rem]" />
+            <img
+              src={githubIconImage}
+              alt=""
+              className="h-[4.5rem] w-[4.5rem] cursor-pointer object-contain opacity-82 drop-shadow-[0_10px_14px_rgba(0,0,0,0.2)] transition-[opacity,filter] duration-300 ease-out group-hover:[animation:playlist-link-float_2.6s_cubic-bezier(0.4,0,0.2,1)_infinite] group-hover:opacity-100 group-hover:drop-shadow-[0_18px_28px_rgba(0,0,0,0.4)] hover:opacity-100 hover:drop-shadow-[0_20px_32px_rgba(0,0,0,0.45)] sm:h-[5.5rem] sm:w-[5.5rem]"
+              loading="lazy"
+              width={88}
+              height={88}
+            />
           </a>
         ) : null}
 
@@ -194,11 +191,18 @@ const PlaylistRow = ({
             href={devpostUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="transition-colors duration-300 hover:text-paper"
+            className="focus-visible:outline-none"
             title="Devpost"
             aria-label={`Open ${title} on Devpost`}
           >
-            <ExternalLink className="size-[1.05rem]" />
+            <img
+              src={devpostIconImage}
+              alt=""
+              className="h-[4.5rem] w-[4.5rem] cursor-pointer object-contain opacity-82 drop-shadow-[0_10px_14px_rgba(0,0,0,0.2)] transition-[opacity,filter] duration-300 ease-out group-hover:[animation:playlist-link-float_2.6s_cubic-bezier(0.4,0,0.2,1)_infinite] group-hover:opacity-100 group-hover:drop-shadow-[0_18px_28px_rgba(0,0,0,0.4)] hover:opacity-100 hover:drop-shadow-[0_20px_32px_rgba(0,0,0,0.45)] sm:h-[5.5rem] sm:w-[5.5rem]"
+              loading="lazy"
+              width={88}
+              height={88}
+            />
           </a>
         ) : null}
       </div>
@@ -234,34 +238,46 @@ const Projects = ({ embedded = false }: ProjectsProps) => {
 
         <div className={`px-6 pb-12 md:px-12 lg:px-16 ${embedded ? "pt-16 md:pt-20" : "pt-24"}`}>
           <div className="mx-auto max-w-[1280px]">
-            <div className="flex justify-start">
+            <div className="flex w-full items-end justify-between gap-6 sm:gap-8">
               <img
                 src={projectsHeader}
                 alt="Projects Portfolio"
-                className="mt-20 block w-full max-w-[34rem] object-contain"
+                className="mt-20 block w-full max-w-[36rem] object-contain xl:max-w-[40rem]"
                 style={{ height: "auto" }}
               />
+              <div className="-ml-2 mt-16 hidden shrink-0 -translate-y-[10px] sm:-ml-3 sm:block lg:-ml-5">
+                <img
+                  src={playlistGif}
+                  alt="Playlist"
+                  className="w-[14rem] object-contain sm:w-[18rem] md:w-[23rem] lg:w-[30rem] xl:w-[34rem]"
+                  draggable={false}
+                />
+                <p className="mt-4 text-center font-typewriter text-[0.72rem] uppercase tracking-[0.28em] text-paper/78 sm:text-[0.76rem]">
+                  scan spotify code for my playlist :)
+                </p>
+              </div>
             </div>
 
-            <div className="mx-auto mt-8 w-full max-w-[72rem]">
+            <div className="mt-8 w-full">
             <div
               className="mb-6 h-px w-full bg-gradient-to-r from-transparent via-paper/35 to-transparent"
               aria-hidden="true"
             />
 
-              <div className="overflow-hidden bg-transparent">
-                <div className="grid grid-cols-[2.75rem_4.5rem_minmax(0,1.45fr)_minmax(0,0.85fr)_minmax(0,0.9fr)_4.25rem] items-center gap-4 px-4 py-4 text-[0.72rem] tracking-[0.02em] text-paper/58 sm:grid-cols-[3.25rem_4.75rem_minmax(0,1.65fr)_minmax(0,1fr)_minmax(0,1fr)_5rem] sm:px-6">
-                  <span className="text-center">#</span>
-                  <span aria-hidden="true" />
-                  <span className="font-sans text-[0.75rem] font-medium">Title</span>
-                  <span className="font-sans text-[0.75rem] font-medium">Album</span>
-                  <span className="font-sans text-[0.75rem] font-medium">Date added</span>
-                  <span className="flex items-center justify-end">
-                    <Clock3 className="size-[0.95rem] stroke-[1.8]" />
-                  </span>
+              <div className="bg-transparent">
+                <div className="px-2 sm:px-3">
+                  <div className="grid grid-cols-[3.3rem_6.5rem_minmax(0,1.7fr)_minmax(0,0.9fr)_6.75rem] items-center gap-6 px-4 py-4 text-[0.95rem] tracking-[0.02em] text-paper/60 sm:grid-cols-[4rem_7.25rem_minmax(0,2.15fr)_minmax(0,0.95fr)_9rem] sm:px-6 sm:text-[1.02rem]">
+                    <span className="text-center">#</span>
+                    <span aria-hidden="true" />
+                    <span className="font-sans text-[0.88rem] font-medium sm:text-[0.96rem]">Title</span>
+                    <span className="font-sans text-[0.88rem] font-medium sm:text-[0.96rem]">Date added</span>
+                    <span className="flex items-center justify-end">
+                      <Clock3 className="size-[1.05rem] stroke-[1.8] sm:size-[1.12rem]" />
+                    </span>
+                  </div>
                 </div>
 
-                <div>
+                <div className="space-y-2 px-2 py-2 sm:px-3">
                   {projectItems.map((project, index) => (
                     <PlaylistRow
                       key={project.title}
@@ -269,7 +285,6 @@ const Projects = ({ embedded = false }: ProjectsProps) => {
                       title={project.title}
                       imageUrl={project.imageUrl}
                       subtitle={project.subtitle}
-                      album={project.album}
                       dateAdded={project.dateAdded}
                       githubUrl={project.githubUrl}
                       devpostUrl={project.devpostUrl}

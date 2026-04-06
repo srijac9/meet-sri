@@ -22,8 +22,8 @@ const SectionReveal = ({ children, className = "", delayMs = 0, id }: SectionRev
         setIsVisible(entry.isIntersecting);
       },
       {
-        threshold: 0.28,
-        rootMargin: "0px 0px -14% 0px",
+        threshold: 0.01,
+        rootMargin: "0px 0px -18% 0px",
       }
     );
 

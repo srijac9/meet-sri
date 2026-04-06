@@ -107,7 +107,7 @@ const Index = () => {
 
           </main>
 
-          <div className="relative overflow-x-clip">
+          <div className="relative space-y-40 overflow-x-clip md:space-y-52">
             <SectionReveal id={SECTION_IDS.about}>
               <About embedded />
             </SectionReveal>
