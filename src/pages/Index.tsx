@@ -25,6 +25,7 @@ const DISC_ANIMATION_RANGE_FRACTION = 0.36;
 const Index = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [discScrollProgress, setDiscScrollProgress] = useState(0);
+  const [experienceFilmOffset, setExperienceFilmOffset] = useState(0);
   const discSectionRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
@@ -117,10 +118,17 @@ const Index = () => {
             </SectionReveal>
 
             <SectionReveal id={SECTION_IDS.experience} delayMs={120}>
-              <Experience embedded />
+              <Experience
+                embedded
+                onFilmStripOffsetChange={setExperienceFilmOffset}
+              />
             </SectionReveal>
 
-            <SectionReveal id={SECTION_IDS.photos} delayMs={160}>
+            <SectionReveal
+              id={SECTION_IDS.photos}
+              delayMs={160}
+              style={{ marginTop: `${experienceFilmOffset}px` }}
+            >
               <Photos embedded />
             </SectionReveal>
           </div>

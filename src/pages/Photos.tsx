@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import PageEdgeShadow from "@/components/PageEdgeShadow";
 import galleryTitle from "@/assets/gallery.png";
 import worldMapImage from "@/assets/world-map.png";
+import pinClickedImage from "@/assets/pin-clicked.png";
 import pinImage from "@/assets/pin.png";
 import p1Image from "@/assets/p1.jpg";
 import p2Image from "@/assets/p2.jpg";
@@ -42,14 +43,14 @@ interface PhotoItem {
 type PhotoLocationFilter = "all" | PhotoItem["location"];
 
 const photoItems: PhotoItem[] = [
-  { id: 1, src: p1Image, alt: "Photo 1", location: "ontario" },
+  { id: 1, src: p1Image, alt: "Photo 1", location: "italy" },
   { id: 2, src: p2Image, alt: "Photo 2", location: "ontario" },
   { id: 3, src: p3Image, alt: "Photo 3", location: "italy" },
   { id: 4, src: p4Image, alt: "Photo 4", location: "italy" },
   { id: 5, src: p5Image, alt: "Photo 5", location: "italy" },
   { id: 6, src: p6Image, alt: "Photo 6", location: "ontario" },
   { id: 7, src: p7Image, alt: "Photo 7", location: "ontario" },
-  { id: 8, src: p8Image, alt: "Photo 8", location: "ontario" },
+  { id: 8, src: p8Image, alt: "Photo 8", location: "italy" },
   { id: 9, src: p9Image, alt: "Photo 9", location: "italy" },
   { id: 10, src: p10Image, alt: "Photo 10", location: "ontario" },
   { id: 11, src: p11Image, alt: "Photo 11", location: "ontario" },
@@ -86,6 +87,19 @@ const threeColumnLayout = createColumnLayout([
   [25, 9, 24, 13, 26, 1, 19],
 ]);
 
+const filteredThreeColumnLayouts = {
+  ontario: createColumnLayout([
+    [2, 16, 17],
+    [6, 10],
+    [7, 11],
+  ]),
+  italy: createColumnLayout([
+    [21, 9, 25, 24, 19, 8],
+    [14, 1, 12, 5, 20],
+    [3, 13, 15, 26, 4],
+  ]),
+} satisfies Record<PhotoItem["location"], PhotoItem[][]>;
+
 const Photos = ({ embedded = false }: PhotosProps) => {
   const Shell = embedded ? "div" : PageEdgeShadow;
   const [activeFilter, setActiveFilter] = useState<PhotoLocationFilter>("all");
@@ -113,6 +127,10 @@ const Photos = ({ embedded = false }: PhotosProps) => {
         : column.filter((photo) => photo.location === activeFilter),
     )
     .filter((column) => column.length > 0);
+  const activeThreeColumnLayout =
+    activeFilter === "all"
+      ? visibleThreeColumnLayout
+      : filteredThreeColumnLayouts[activeFilter];
 
   return (
     <div className={`relative w-full text-paper ${embedded ? "bg-transparent" : "bg-burgundy-dark"}`}>
@@ -138,78 +156,80 @@ const Photos = ({ embedded = false }: PhotosProps) => {
               className="relative z-0 w-[23rem] max-w-[82vw] origin-left-bottom scale-[1.08] object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.35)] md:w-[33rem] md:scale-[1.12]"
               draggable={false}
             />
-            <div className="relative z-10 w-[27rem] max-w-[92vw] sm:-ml-10 sm:w-[32rem] md:-ml-16 md:w-[41rem] lg:-ml-24 lg:w-[47rem]">
-              <img
-                src={worldMapImage}
-                alt="World map"
-                className="w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.28)]"
-                draggable={false}
-              />
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveFilter((current) => (current === "ontario" ? "all" : "ontario"))
-                }
-                className="absolute -translate-x-1/2 -translate-y-full bg-transparent p-0 text-left focus-visible:outline-none"
-                style={{ left: "26.5%", top: "30.5%" }}
-                aria-label="Filter photos to Ontario"
-                aria-pressed={activeFilter === "ontario"}
-                title="Ontario"
-              >
+            <div className="relative z-10 flex w-[27rem] max-w-[92vw] flex-col items-center sm:-ml-10 sm:w-[32rem] md:-ml-16 md:w-[41rem] lg:-ml-24 lg:w-[47rem]">
+              <div className="relative w-full">
                 <img
-                  src={pinImage}
-                  alt=""
-                  aria-hidden="true"
-                  className={`w-5 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-all duration-300 sm:w-6 md:w-7 ${
-                    activeFilter === "ontario"
-                      ? "scale-[1.14]"
-                      : "opacity-88 hover:-translate-y-1 hover:scale-[1.12] hover:drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
-                  }`}
+                  src={worldMapImage}
+                  alt="World map"
+                  className="w-full object-contain drop-shadow-[0_10px_22px_rgba(0,0,0,0.28)]"
                   draggable={false}
                 />
-                <span
-                  className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-1 text-[0.62rem] font-typewriter uppercase tracking-[0.18em] transition-colors ${
-                    activeFilter === "ontario"
-                      ? "bg-paper text-burgundy-dark"
-                      : "bg-background/70 text-paper/85"
-                  }`}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveFilter((current) => (current === "ontario" ? "all" : "ontario"))
+                  }
+                  className="absolute -translate-x-1/2 -translate-y-full bg-transparent p-0 text-left focus-visible:outline-none"
+                  style={{ left: "26.5%", top: "30.5%" }}
+                  aria-label="Filter photos to Ontario"
+                  aria-pressed={activeFilter === "ontario"}
+                  title="Ontario"
                 >
-                  Ontario
-                </span>
-              </button>
-              <button
-                type="button"
-                onClick={() =>
-                  setActiveFilter((current) => (current === "italy" ? "all" : "italy"))
-                }
-                className="absolute -translate-x-1/2 -translate-y-full bg-transparent p-0 text-left focus-visible:outline-none"
-                style={{ left: "53.5%", top: "33%" }}
-                aria-label="Filter photos to Italy"
-                aria-pressed={activeFilter === "italy"}
-                title="Italy"
-              >
-                <img
-                  src={pinImage}
-                  alt=""
-                  aria-hidden="true"
-                  className={`w-5 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-all duration-300 sm:w-6 md:w-7 ${
-                    activeFilter === "italy"
-                      ? "scale-[1.14]"
-                      : "opacity-88 hover:-translate-y-1 hover:scale-[1.12] hover:drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
-                  }`}
-                  draggable={false}
-                />
-                <span
-                  className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-1 text-[0.62rem] font-typewriter uppercase tracking-[0.18em] transition-colors ${
-                    activeFilter === "italy"
-                      ? "bg-paper text-burgundy-dark"
-                      : "bg-background/70 text-paper/85"
-                  }`}
+                  <img
+                    src={activeFilter === "ontario" ? pinClickedImage : pinImage}
+                    alt=""
+                    aria-hidden="true"
+                    className={`w-5 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-all duration-300 sm:w-6 md:w-7 ${
+                      activeFilter === "ontario"
+                        ? "scale-[1.14]"
+                        : "opacity-88 hover:-translate-y-1 hover:scale-[1.12] hover:drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
+                    }`}
+                    draggable={false}
+                  />
+                  <span
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-1 text-[0.62rem] font-typewriter uppercase tracking-[0.18em] transition-colors ${
+                      activeFilter === "ontario"
+                        ? "bg-paper text-burgundy-dark"
+                        : "bg-background/70 text-paper/85"
+                    }`}
+                  >
+                    Ontario
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveFilter((current) => (current === "italy" ? "all" : "italy"))
+                  }
+                  className="absolute -translate-x-1/2 -translate-y-full bg-transparent p-0 text-left focus-visible:outline-none"
+                  style={{ left: "53.5%", top: "30.5%" }}
+                  aria-label="Filter photos to Italy"
+                  aria-pressed={activeFilter === "italy"}
+                  title="Italy"
                 >
-                  Italy
-                </span>
-              </button>
-              <div className="mt-4 flex justify-center">
+                  <img
+                    src={activeFilter === "italy" ? pinClickedImage : pinImage}
+                    alt=""
+                    aria-hidden="true"
+                    className={`w-5 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-all duration-300 sm:w-6 md:w-7 ${
+                      activeFilter === "italy"
+                        ? "scale-[1.14]"
+                        : "opacity-88 hover:-translate-y-1 hover:scale-[1.12] hover:drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
+                    }`}
+                    draggable={false}
+                  />
+                  <span
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-1 text-[0.62rem] font-typewriter uppercase tracking-[0.18em] transition-colors ${
+                      activeFilter === "italy"
+                        ? "bg-paper text-burgundy-dark"
+                        : "bg-background/70 text-paper/85"
+                    }`}
+                  >
+                    Italy
+                  </span>
+                </button>
+              </div>
+              <div className="mt-4 flex min-h-[2.5rem] items-center justify-center">
                 {activeFilter === "all" ? (
                   <p className="text-center text-[0.68rem] font-typewriter uppercase tracking-[0.22em] text-paper/74">
                     click a pin to filter
@@ -272,7 +292,7 @@ const Photos = ({ embedded = false }: PhotosProps) => {
           </div>
 
           <div className="hidden items-start gap-4 lg:flex">
-            {visibleThreeColumnLayout.map((column, columnIndex) => (
+            {activeThreeColumnLayout.map((column, columnIndex) => (
               <div
                 key={columnIndex}
                 className="flex-1 space-y-4"
