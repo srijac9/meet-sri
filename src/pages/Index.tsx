@@ -87,10 +87,10 @@ const Index = () => {
         <div className="relative z-10">
           <main
             ref={discSectionRef}
-            className={`relative overflow-hidden ${DISC_SECTION_HEIGHT_CLASS}`}
+            className={`relative overflow-visible ${DISC_SECTION_HEIGHT_CLASS}`}
           >
             <div
-              className="sticky top-0 z-20 flex h-screen flex-col items-center justify-center gap-10 px-4 pb-16 pt-40 sm:gap-12 sm:pt-44 md:pt-48"
+              className="sticky top-0 z-20 flex h-screen flex-col items-center justify-center gap-10 px-4 pb-16 pt-60 sm:gap-12 sm:pt-64 md:pt-72"
               style={{
                 opacity: 1 - discScrollProgress * 1.65,
                 transform: `scale(${1 + discScrollProgress * 0.12})`,
