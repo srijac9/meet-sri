@@ -51,7 +51,7 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
   }, [isPlaying]);
 
   return (
-    <div className="mx-auto w-full max-w-lg">
+    <div className="mx-auto w-[23rem] max-w-[92vw] md:w-[31rem] lg:w-[37rem]">
       <div className="mb-3 flex justify-center">
         <span
           className="inline-block rounded-full px-4 py-1.5 text-xs tracking-[0.24em] uppercase"

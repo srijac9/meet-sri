@@ -1,6 +1,5 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import FilmStrip from "./FilmStrip";
 
 export default function Scene() {
   return (
@@ -17,8 +16,6 @@ export default function Scene() {
         <directionalLight position={[-5, 5, -3]} intensity={1.35} color="#f1f1f1" />
         <pointLight position={[-5, 3, 4]} intensity={1.1} color="#ffffff" />
         <pointLight position={[5, -2, 6]} intensity={0.7} color="#e8e8e8" />
-
-        <FilmStrip />
 
         <OrbitControls
           target={[0.5, 0.45, 0]}

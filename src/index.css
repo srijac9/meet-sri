@@ -94,11 +94,19 @@
 }
 
 @layer base {
-  html,
-  body,
-  #root {
+  html {
+    min-height: 100%;
     max-width: 100%;
     overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  body,
+  #root {
+    min-height: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    overflow-y: clip;
   }
 
   * {
@@ -278,6 +286,15 @@
     }
     50% {
       opacity: 1;
+    }
+  }
+
+  @keyframes playlist-link-float {
+    0%, 100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-5px) scale(1.16);
     }
   }
 
