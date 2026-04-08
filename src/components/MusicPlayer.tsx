@@ -51,7 +51,7 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
   }, [isPlaying]);
 
   return (
-    <div className="mx-auto w-[23rem] max-w-[92vw] md:w-[31rem] lg:w-[37rem]">
+    <div className="mx-auto w-[min(92vw,30rem)] md:w-[31rem] lg:w-[37rem]">
       <div className="mb-3 flex justify-center">
         <span
           className="inline-block rounded-full px-4 py-1.5 text-xs tracking-[0.24em] uppercase"
@@ -66,14 +66,14 @@ const MusicPlayer = ({ isPlaying, onToggle }: MusicPlayerProps) => {
       </div>
 
       <div
-        className="rounded-[1.75rem] p-6 md:p-7"
+        className="rounded-[1.75rem] px-5 py-5 sm:px-6 sm:py-5.5 md:p-7"
         style={{
           backgroundColor: "rgba(243, 229, 208, 0.08)",
           boxShadow: "inset 0 1px 3px rgba(0,0,0,0.2), 0 1px 2px rgba(243,229,208,0.05)",
         }}
       >
-        <div className="mb-5 flex items-center justify-between">
-          <div>
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <div className="min-w-0">
             <p className="font-elegant text-[1.75rem] leading-none text-paper md:text-[2rem]">{"srija's life \u2661"}</p>
             <p className="mt-1.5 text-xs text-paper/60 md:text-sm">Student, Engineer, Developer</p>
           </div>

@@ -18,7 +18,7 @@ const SECTION_IDS = {
 
 const ONE_PAGE_BACKGROUND =
   "linear-gradient(180deg, #7a1410 0%, #71110e 42%, #68100d 100%)";
-const DISC_SECTION_HEIGHT_CLASS = "h-[132vh] md:h-[120vh] lg:h-[110vh]";
+const DISC_SECTION_HEIGHT_CLASS = "h-[148vh] md:h-[132vh] lg:h-[120vh]";
 const DISC_ANIMATION_START_FRACTION = 0.14;
 const DISC_ANIMATION_RANGE_FRACTION = 0.36;
 
@@ -69,7 +69,7 @@ const Index = () => {
       <HeroSection />
 
       <PageEdgeShadow
-        className="relative w-full"
+        className="relative w-full overflow-hidden"
         style={{ background: ONE_PAGE_BACKGROUND }}
       >
         <div
@@ -87,10 +87,10 @@ const Index = () => {
         <div className="relative z-10">
           <main
             ref={discSectionRef}
-            className={`relative overflow-hidden ${DISC_SECTION_HEIGHT_CLASS}`}
+            className={`relative overflow-hidden pt-12 pb-24 sm:pt-16 sm:pb-28 md:pt-20 md:pb-32 ${DISC_SECTION_HEIGHT_CLASS}`}
           >
             <div
-              className="sticky top-0 z-20 flex h-screen flex-col items-center justify-start gap-10 px-4 pb-16 pt-60 sm:gap-12 sm:pt-64 md:pt-72 lg:justify-center"
+              className="sticky top-0 z-20 flex h-[100svh] flex-col items-center justify-center gap-5 px-4 py-6 sm:gap-7 sm:py-8 md:h-screen md:gap-10 md:py-10"
               style={{
                 opacity: 1 - discScrollProgress * 1.65,
                 transform: `scale(${1 + discScrollProgress * 0.12})`,
