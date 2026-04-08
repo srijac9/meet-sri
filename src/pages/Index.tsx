@@ -87,7 +87,7 @@ const Index = () => {
         <div className="relative z-10">
           <main
             ref={discSectionRef}
-            className={`relative overflow-x-visible overflow-y-hidden ${DISC_SECTION_HEIGHT_CLASS}`}
+            className={`relative overflow-hidden ${DISC_SECTION_HEIGHT_CLASS}`}
           >
             <div
               className="sticky top-0 z-20 flex h-screen flex-col items-center justify-start gap-10 px-4 pb-16 pt-60 sm:gap-12 sm:pt-64 md:pt-72 lg:justify-center"

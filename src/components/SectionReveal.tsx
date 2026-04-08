@@ -48,7 +48,8 @@ const SectionReveal = ({ children, className = "", delayMs = 0, id, style }: Sec
         transition: `opacity 860ms ease, transform 980ms cubic-bezier(0.22, 1, 0.36, 1), filter 860ms ease`,
         transitionDelay: `${delayMs}ms`,
         willChange: isVisible ? "auto" : "opacity, transform, filter",
-        overflow: "visible",
+        overflowX: "clip",
+        overflowY: "visible",
       }}
     >
       {children}
