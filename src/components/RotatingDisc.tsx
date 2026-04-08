@@ -1,5 +1,5 @@
 ﻿import { useNavigate } from "react-router-dom";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import projectsCollage from "@/assets/projects-collage.png";
 import photosCollage from "@/assets/photos-collage.png";
 import aboutCollage from "@/assets/about-collage.png";
@@ -15,6 +15,10 @@ interface RotatingDiscProps {
   onSectionSelect?: (section: "projects" | "experience" | "photos" | "about") => void;
 }
 
+const DISC_BASE_SIZE = 592;
+const DISC_MIN_SIZE = 280;
+const DISC_OUTER_PADDING = 12;
+
 const RotatingDisc = ({ isPlaying, onSectionSelect }: RotatingDiscProps) => {
   const navigate = useNavigate();
   const rotationRef = useRef(0);
@@ -23,6 +27,7 @@ const RotatingDisc = ({ isPlaying, onSectionSelect }: RotatingDiscProps) => {
   const settleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasPlayedRef = useRef(false);
   const discRef = useRef<HTMLDivElement | null>(null);
+  const [discSize, setDiscSize] = useState(DISC_BASE_SIZE);
   const projectsBaseTransform = "scale(1.20)";
   const projectsHoverTransform = "scale(1.30)";
   const experienceBaseTransform = "scale(1.25)";
@@ -41,6 +46,35 @@ const RotatingDisc = ({ isPlaying, onSectionSelect }: RotatingDiscProps) => {
 
     navigate(`/${section}`);
   };
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+
+    const updateDiscSize = () => {
+      const viewportWidth = viewport?.width ?? window.innerWidth;
+      const viewportHeight = viewport?.height ?? window.innerHeight;
+      const isLargeViewport = viewportWidth >= 1024;
+      const isMediumViewport = viewportWidth >= 768;
+      const horizontalPadding = isLargeViewport ? 96 : isMediumViewport ? 64 : 32;
+      const verticalReserve = isLargeViewport ? 280 : isMediumViewport ? 360 : 320;
+      const maxDiscSize = Math.min(
+        DISC_BASE_SIZE,
+        viewportWidth - horizontalPadding,
+        viewportHeight - verticalReserve,
+      );
+
+      setDiscSize(Math.max(DISC_MIN_SIZE, maxDiscSize));
+    };
+
+    updateDiscSize();
+    window.addEventListener("resize", updateDiscSize);
+    viewport?.addEventListener("resize", updateDiscSize);
+
+    return () => {
+      window.removeEventListener("resize", updateDiscSize);
+      viewport?.removeEventListener("resize", updateDiscSize);
+    };
+  }, []);
 
   useEffect(() => {
     const applyRotation = (rotation: number) => {
@@ -116,8 +150,10 @@ const RotatingDisc = ({ isPlaying, onSectionSelect }: RotatingDiscProps) => {
     };
   }, [isPlaying]);
 
+  const discScale = discSize / DISC_BASE_SIZE;
+
   return (
-    <div className="relative">
+    <div className="relative" style={{ width: `${discSize}px`, height: `${discSize}px` }}>
       {/* Corner labels (shown when disc is paused) */}
       <div
         className="pointer-events-none absolute max-w-[22rem] transition-all duration-700 ease-out"
@@ -202,21 +238,30 @@ const RotatingDisc = ({ isPlaying, onSectionSelect }: RotatingDiscProps) => {
 
       {/* Soft glow behind the disc */}
       <div
-        className="pointer-events-none absolute -inset-8 rounded-full blur-3xl"
+        className="pointer-events-none absolute left-1/2 top-1/2 rounded-full blur-3xl"
         aria-hidden="true"
         style={{
+          width: `${DISC_BASE_SIZE}px`,
+          height: `${DISC_BASE_SIZE}px`,
           background: "radial-gradient(circle, #D4B896 0%, transparent 70%)",
           opacity: 0.14,
+          transform: `translate(-50%, -50%) scale(${discScale})`,
+          transformOrigin: "center",
         }}
       />
 
       {/* Outer disc ring */}
       <div
-        className="relative h-[23rem] w-[23rem] rounded-full p-3 md:h-[31rem] md:w-[31rem] lg:h-[37rem] lg:w-[37rem]"
+        className="absolute left-1/2 top-1/2 box-border rounded-full relative"
         style={{
+          width: `${DISC_BASE_SIZE}px`,
+          height: `${DISC_BASE_SIZE}px`,
+          padding: `${DISC_OUTER_PADDING}px`,
           background:
             "linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 50%, #262626 100%)",
           boxShadow: "0 12px 48px rgba(0, 0, 0, 0.45)",
+          transform: `translate(-50%, -50%) scale(${discScale})`,
+          transformOrigin: "center",
         }}
       >
         {/* Inner rotating disc */}
