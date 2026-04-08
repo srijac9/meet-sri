@@ -39,7 +39,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: dillpklImage,
     subtitle:
       "An agent-based AutoML web app that automates and explains the end-to-end machine learning pipeline from raw data to deployment.",
-    dateAdded: "Jan 2026",
+    dateAdded: "March 2026",
     githubUrl: "https://github.com/srijac9/dill.pkl",
     devpostUrl: "https://devpost.com/software/dill-pkl",
     videoUrl: "https://youtu.be/gd5_XDCytLc",
@@ -49,7 +49,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: iClickImage,
     subtitle:
       "An accessibility app that enables hands-free computer navigation using eye tracking, blink gestures, and voice input.",
-    dateAdded: "Dec 2025",
+    dateAdded: "Feb 2026",
     githubUrl: "https://github.com/srijac9/iClick",
     devpostUrl: "https://devpost.com/software/iclick-4rynjv",
   },
@@ -58,7 +58,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: breadboardImage,
     subtitle:
       "An interactive learning tool that uses a live camera feed and real-time voice guidance to help users build circuits on a breadboard step by step.",
-    dateAdded: "Nov 2025",
+    dateAdded: "Jan 2026",
     githubUrl: "https://github.com/srijac9/nexhacks",
     devpostUrl: "https://devpost.com/software/circuit-build",
   },
@@ -67,7 +67,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: footprintImage,
     subtitle:
       "An AI tool that redesigns your room using Feng Shui principles and generates a 3D layout from a video scan.",
-    dateAdded: "Oct 2025",
+    dateAdded: "July 2025",
     githubUrl: "https://github.com/srijac9/foot.print",
     devpostUrl: "https://devpost.com/software/foot-print",
     videoUrl: "https://youtu.be/GHOyehbWS0U",
@@ -77,7 +77,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: dermacareImage,
     subtitle:
       "A skincare app that scans and analyzes product ingredients and provides AI-powered recommendations based on your skin type.",
-    dateAdded: "Sep 2025",
+    dateAdded: "June 2025",
     githubUrl: "https://github.com/srijac9/DermaCare",
     devpostUrl: "https://devpost.com/software/secret-project-m6s25w",
     videoUrl: "https://youtu.be/j2ykAA4lfdY",
@@ -87,7 +87,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: irrigationSystemImage,
     subtitle:
       "A microcontroller-based irrigation system that monitors soil moisture and automatically waters plants when needed.",
-    dateAdded: "May 2024",
+    dateAdded: "Dec 2024",
     githubUrl: "https://github.com/srijac9/Soil-Irrigation-System",
   },
   {
@@ -95,7 +95,7 @@ const projectItems: ProjectItem[] = [
     imageUrl: recipeFinderImage,
     subtitle:
       "A web app that finds recipes based on the user's cravings and desired ingredients.",
-    dateAdded: "Jan 2024",
+    dateAdded: "Dec 2022",
     devpostUrl: "https://devpost.com/software/recipe-finder-xed0oz",
   },
   {
