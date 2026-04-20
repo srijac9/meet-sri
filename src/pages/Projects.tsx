@@ -4,6 +4,7 @@ import FloatingHearts from "@/components/FloatingHearts";
 import PageEdgeShadow from "@/components/PageEdgeShadow";
 import breadboardImage from "@/assets/breadboard.png";
 import dermacareImage from "@/assets/dermacare.png";
+import notesWikiImage from "@/assets/notesWikiImage.png";
 import dillpklImage from "@/assets/dillpklImage.png";
 import devpostIconImage from "@/assets/devpost.png";
 import footprintImage from "@/assets/footprint.png";
@@ -34,6 +35,14 @@ interface PlaylistRowProps extends ProjectItem {
 }
 
 const projectItems: ProjectItem[] = [
+  {
+    title: "Notes Wiki",
+    imageUrl: notesWikiImage,
+    subtitle:
+      "Processes handwritten notes into structured, searchable data using vision-based LLM pipelines.",
+    dateAdded: "April 2026",
+    githubUrl: "https://github.com/srijac9/Notes-Wiki",
+  },
   {
     title: "dill.pkl",
     imageUrl: dillpklImage,
