@@ -33,9 +33,9 @@ const experienceEntries: ExperienceEntry[] = [
     summary:
       "Built and deployed full-stack features, backend automation services, and cross-system synchronization workflows for web applications and internal data operations.",
     highlights: [
-      "Architected and deployed full-stack features for web applications using JavaScript, React, Node.js, and MongoDB",
-      "Designed an automated SharePoint data synchronization pipeline using AWS Lambda and EventBridge Scheduler to eliminate manual entry processes",
-      "Developed backend services deployed on AWS EC2 to support scheduled automation tasks and API-driven data synchronization",
+      "Spearheaded the end-to-end development of a user-facing integrated product as the sole developer, independently architecting and maintaining scalable frontend and backend features using React, Node.js, and MongoDB",
+      "Designed an automated data synchronization system using AWS Lambda, EventBridge, and EC2-based services, building RESTful APIs and scheduled workers to automate cross-system data consistency and eliminate manual processes",
+      "Accelerated the SDLC by 5× using AI-assisted workflows to architect and deploy a production-ready full-stack MVP in just 4 days",
     ],
     technologies: ["JavaScript", "React", "Node.js", "MongoDB", "AWS Lambda", "AWS EC2"],
   },
