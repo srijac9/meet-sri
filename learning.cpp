@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <ctype.h>
 
 #include <system.h>
 #include <sys/alt_alarm.h>
@@ -21,10 +22,38 @@
 
 #include <altera_up_avalon_audio.h>
 #include <altera_up_avalon_audio_and_video_config.h>
+#include "altera_avalon_pio_regs.h"
+#include "altera_avalon_timer_regs.h"
+#include "sys/alt_irq.h"
 
 /*=========================================================================*/
 /*  DEFINE: All Structures and Common Constants                            */
 /*=========================================================================*/
+#define NUM_BUTTONS 4
+#define DEBOUNCE_DELAY_HZ 50u // 20 ms debounce delay
+#define MAX_SONGS 20
+#define MAX_FILENAME_LENGTH 64
+#define WAV_HEADER_SIZE 44
+
+#define PLAYER_CONTINUE -1
+#define PLAYER_STOPPED 0
+#define PLAYER_FINISHED 1
+#define PLAYER_PREVIOUS 2
+#define PLAYER_NEXT 3
+#define PLAYER_ERROR 4
+#define PLAYER_PREVIOUS_STOP 5
+#define PLAYER_NEXT_STOP 6
+
+volatile int debounce_pb[NUM_BUTTONS] = {0, 0, 0, 0}; //stable debounced button states
+volatile unsigned int button_press_event[NUM_BUTTONS] = {0, 0, 0, 0}; // clean button press events that are waiting to be handled
+char wavFilename[MAX_SONGS][MAX_FILENAME_LENGTH]; // WAV files found on SD card
+unsigned long wavFileSize[MAX_SONGS];
+int wavSongCount = 0, currentSongIndex = 0;
+static FILE *lcd_dev = NULL; // stores the opened LCD screen device
+
+#ifndef TIMER_0_FREQ
+#define TIMER_0_FREQ 50000000u
+#endif
 
 /*=========================================================================*/
 /*  DEFINE: Macros                                                         */
@@ -35,6 +64,7 @@
 /*=========================================================================*/
 /*  DEFINE: Prototypes                                                     */
 /*=========================================================================*/
+static void put_rc(FRESULT rc); // prints the FatFS result codes
 
 /*=========================================================================*/
 /*  DEFINE: Definition of all local Data                                   */
@@ -46,6 +76,61 @@ static volatile unsigned short Timer;   /* 1000Hz increment timer */
 /*=========================================================================*/
 /*  DEFINE: Definition of all local Procedures                             */
 /*=========================================================================*/
+
+static void start_debounce_timer(void)
+{
+    alt_u32 ticks = (alt_u32)(TIMER_0_FREQ / DEBOUNCE_DELAY_HZ); // 20 ms debounce delay
+    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_0_BASE, ALTERA_AVALON_TIMER_CONTROL_STOP_MSK);
+    IOWR_ALTERA_AVALON_TIMER_PERIODL(TIMER_0_BASE, (ticks - 1u) & 0xFFFFu);
+    IOWR_ALTERA_AVALON_TIMER_PERIODH(TIMER_0_BASE, ((ticks - 1u) >> 16) & 0xFFFFu);
+    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_0_BASE, 0);
+    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_0_BASE,
+        ALTERA_AVALON_TIMER_CONTROL_ITO_MSK |
+        ALTERA_AVALON_TIMER_CONTROL_START_MSK);
+}
+
+static void button_isr(void *context, alt_u32 id) // button interrupt starts debounce timer
+{
+    (void)context;
+    (void)id;
+    IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTON_PIO_BASE, 0x00); // ignore more button edges while bouncing
+    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTON_PIO_BASE, 0x0F); // clear button edge capture
+    start_debounce_timer();
+}
+
+static void timer_isr(void *context, alt_u32 id) // timer interrupt checks buttons after debounce delay
+{
+    alt_u32 raw_buttons = (~IORD_ALTERA_AVALON_PIO_DATA(BUTTON_PIO_BASE)) & 0x0F; // reads the buttons (active low)
+
+    (void)context;
+    (void)id;
+    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_0_BASE, ALTERA_AVALON_TIMER_CONTROL_STOP_MSK);
+    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_0_BASE, 0); // clear interrupt flag
+
+    for (int i = 0; i < NUM_BUTTONS; i++) // for every button
+    {
+        int state = (raw_buttons & (1u << i)) ? 1 : 0;
+        if (state != debounce_pb[i])
+        {
+            if (state) button_press_event[i]++; // count press when button changes from released to pressed
+            debounce_pb[i] = state; // update finalized state after debounce delay
+        }
+    }
+
+    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTON_PIO_BASE, 0x0F); // clear edges caused by bounce
+    IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTON_PIO_BASE, 0x0F); // re-enable button interrupts
+}
+
+static void init_debounce_timer(void) { // configures button and timer interrupts for debouncing
+    IOWR_ALTERA_AVALON_TIMER_CONTROL(TIMER_0_BASE, ALTERA_AVALON_TIMER_CONTROL_STOP_MSK); // stops timer
+    IOWR_ALTERA_AVALON_TIMER_STATUS(TIMER_0_BASE, 0); // clear interrupt flag
+    alt_irq_register(TIMER_0_IRQ, NULL, timer_isr); // connects the timer interrupt to isr
+
+    IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTON_PIO_BASE, 0x00);
+    IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BUTTON_PIO_BASE, 0x0F);
+    alt_irq_register(BUTTON_PIO_IRQ, NULL, button_isr); // connects the button interrupt to isr
+    IOWR_ALTERA_AVALON_PIO_IRQ_MASK(BUTTON_PIO_BASE, 0x0F);
+}
 
 /***************************************************************************/
 /*  TimerFunction                                                          */
@@ -118,6 +203,256 @@ DIR Dir;                        /* Directory object */
 uint8_t Buff[8192] __attribute__ ((aligned(4)));  /* Working buffer */
 
 
+/*=========================================================================*/
+/*  WAV player helper functions                                            */
+/*=========================================================================*/
+int isWav(char *filename) // checks if a filename ends in .wav
+{
+    int n = filename ? (int)strlen(filename) : 0;
+    char *e = n >= 4 ? filename + n - 4 : NULL;
+    return e && e[0] == '.' && tolower((unsigned char)e[1]) == 'w' &&
+           tolower((unsigned char)e[2]) == 'a' && tolower((unsigned char)e[3]) == 'v';
+}
+static FRESULT buildSongIndex(const char *path) // scans the SD directory and stores all the WAV files
+{
+    DIR d;
+    FILINFO f;
+    FRESULT r;
+    const char *name;
+#if _USE_LFN
+    char lfn[MAX_FILENAME_LENGTH];
+    f.lfname = lfn;
+    f.lfsize = sizeof(lfn);
+#endif
+    wavSongCount = currentSongIndex = 0; // reset song list
+    if ((r = f_opendir(&d, path)) != FR_OK) return r; // open SD card directory
+    while (wavSongCount < MAX_SONGS && (r = f_readdir(&d, &f)) == FR_OK && f.fname[0])
+    {
+        if (f.fattrib & AM_DIR) continue;
+#if _USE_LFN
+        name = f.lfname[0] ? f.lfname : f.fname;
+#else
+        name = f.fname;
+#endif
+        if (isWav((char *)name))
+        {
+            strncpy(wavFilename[wavSongCount], name, MAX_FILENAME_LENGTH - 1);
+            wavFilename[wavSongCount][MAX_FILENAME_LENGTH - 1] = '\0';
+            wavFileSize[wavSongCount++] = (unsigned long)f.fsize;
+        }
+    }
+    return r;
+}
+static void initLcd(void) // opens and clears the LCD display
+{
+    lcd_dev = fopen("/dev/lcd_display", "w"); // open LCD device for writing
+    if (!lcd_dev)
+    {
+        xprintf("Warning: could not open LCD device\n");
+        return;
+    }
+    fprintf(lcd_dev, "\x1b[2J\x1b[H"); // clear LCD
+    fflush(lcd_dev);
+}
+static void lcdWriteLine(int row, const char *message) // writes to LCD
+{
+    char line[17];
+    int n = message ? (int)strlen(message) : 0;
+    if (!lcd_dev) return;
+    if (n > 16) n = 16;
+    memset(line, ' ', 16);
+    memcpy(line, message ? message : "", n);
+    line[16] = '\0';
+    fprintf(lcd_dev, "\x1b[%d;1H%s", row + 1, line);
+    fflush(lcd_dev);
+}
+static const char *switchModeText(uint8_t switches)
+{
+    static const char *modes[] = {"PBACK-NORM SPD", "PBACK-HALF SPD", "PBACK-DBL SPD", "PBACK-MONO"};
+    return modes[switches & 0x03];
+}
+static void updateLcdDisplay(int song_index, const char *status) // updates LCD with the song and status
+{
+    char line[17];
+    if (wavSongCount <= 0)
+    {
+        lcdWriteLine(0, "NO WAV FILES");
+        lcdWriteLine(1, "STOPPED");
+        return;
+    }
+    snprintf(line, sizeof(line), "%02d %-13.13s", song_index + 1, wavFilename[song_index]);
+    lcdWriteLine(0, line);
+    snprintf(line, sizeof(line), "%-16.16s", status);
+    lcdWriteLine(1, line);
+}
+static int takeButtonEvent(int button_number) // takes one debounced button press event
+{
+    alt_irq_context ctx = alt_irq_disable_all(); // disable interrupts
+    int hit = button_press_event[button_number] > 0; // checks if button has pending press
+    if (hit) button_press_event[button_number]--;
+    alt_irq_enable_all(ctx); // renable interrupts
+    return hit;
+}
+static void clearButtonEvents(void) // clears all pending button events
+{
+    alt_irq_context ctx = alt_irq_disable_all();
+    for (int i = 0; i < NUM_BUTTONS; i++) button_press_event[i] = 0;
+    alt_irq_enable_all(ctx);
+}
+static int closeWith(alt_up_audio_dev *audio_dev, FIL *file, int result) // stops audio, closes file, and returns playback result
+{
+    alt_up_audio_reset_audio_core(audio_dev);
+    f_close(file);
+    if (result == PLAYER_STOPPED) xprintf("Stopped\n");
+    return result;
+}
+static int handlePlaybackButtons(alt_up_audio_dev *audio_dev, FIL *file, int song_index, int *paused, const char *mode_text) // handles previous, stop, pause, next
+{
+    if (takeButtonEvent(0)) return closeWith(audio_dev, file, *paused ? PLAYER_PREVIOUS_STOP : PLAYER_PREVIOUS);
+    if (takeButtonEvent(1)) return closeWith(audio_dev, file, PLAYER_STOPPED);
+    if (takeButtonEvent(2))
+    {
+        *paused = !*paused;
+        if (*paused) alt_up_audio_reset_audio_core(audio_dev);
+        updateLcdDisplay(song_index, *paused ? "PAUSED" : mode_text);
+        xprintf(*paused ? "Paused\n" : "Resumed\n");
+    }
+    if (takeButtonEvent(3)) return closeWith(audio_dev, file, *paused ? PLAYER_NEXT_STOP : PLAYER_NEXT);
+    return PLAYER_CONTINUE;
+}
+static int playIndexedSong(alt_up_audio_dev *audio_dev, int song_index) // plays one WAV file from the indexed song list
+{
+    FIL file;
+    FRESULT r;
+    uint32_t got;
+    int ev;
+    int paused = 0;
+    uint8_t switches = IORD(SWITCH_PIO_BASE, 0) & 0x03; // read SW1:SW0 playback mode once when track starts
+    uint32_t frame_step = switches == 0x02 ? 8 : 4; // double speed skips every other frame
+    int repeat_count = switches == 0x01 ? 2 : 1; // half speed repeats frame
+    const char *mode_text = switchModeText(switches);
+
+    if (!audio_dev || song_index < 0 || song_index >= wavSongCount) return PLAYER_ERROR;
+    if ((r = f_open(&file, wavFilename[song_index], FA_READ)) != FR_OK || // open selected WAV file
+        (r = f_read(&file, Buff, WAV_HEADER_SIZE, &got)) != FR_OK || got != WAV_HEADER_SIZE) // skip WAV header
+    {
+        if (r != FR_OK) put_rc(r);
+        else xprintf("Could not read WAV header: %s\n", wavFilename[song_index]);
+        f_close(&file);
+        return PLAYER_ERROR;
+    }
+    clearButtonEvents();
+    updateLcdDisplay(song_index, mode_text);
+    xprintf("Playing %d/%d: %s (%u bytes)\n", song_index + 1, wavSongCount,
+            wavFilename[song_index], (unsigned int)wavFileSize[song_index]);
+    for (;;)
+    {
+        ev = handlePlaybackButtons(audio_dev, &file, song_index, &paused, mode_text);
+        if (ev != PLAYER_CONTINUE) return ev;
+        if (paused) continue; // stop reading audio while paused
+        r = f_read(&file, Buff, sizeof(Buff) - sizeof(Buff) % 4, &got);
+        if (r != FR_OK)
+        {
+            put_rc(r);
+            f_close(&file);
+            return PLAYER_ERROR;
+        }
+        if (got == 0)
+        {
+            f_close(&file);
+            return PLAYER_FINISHED;
+        }
+        got -= got % 4; // keep only complete stereo frames
+
+        for (uint32_t i = 0; i + 3 < got; i += frame_step)
+        {
+            uint16_t left, right;
+            ev = handlePlaybackButtons(audio_dev, &file, song_index, &paused, mode_text);
+            if (ev != PLAYER_CONTINUE) return ev;
+            while (paused)
+            {
+                ev = handlePlaybackButtons(audio_dev, &file, song_index, &paused, mode_text);
+                if (ev != PLAYER_CONTINUE) return ev;
+            }
+            left = (uint16_t)Buff[i] | ((uint16_t)Buff[i + 1] << 8); // combined two bytes into left audio sample
+            right = switches == 0x03 ? left : ((uint16_t)Buff[i + 2] | ((uint16_t)Buff[i + 3] << 8)); // normal mode uses right sample, mono copies left
+            for (int repeat = 0; repeat < repeat_count; repeat++)
+            {
+                while (alt_up_audio_write_fifo_space(audio_dev, ALT_UP_AUDIO_LEFT) == 0 || // wait until audio FIFO has room
+                       alt_up_audio_write_fifo_space(audio_dev, ALT_UP_AUDIO_RIGHT) == 0)
+                {
+                    ev = handlePlaybackButtons(audio_dev, &file, song_index, &paused, mode_text);
+                    if (ev != PLAYER_CONTINUE) return ev;
+                    if (paused) break;
+                }
+                if (paused) break;
+                alt_up_audio_write_fifo_head(audio_dev, left, ALT_UP_AUDIO_LEFT); // write left sample
+                alt_up_audio_write_fifo_head(audio_dev, right, ALT_UP_AUDIO_RIGHT); // write right sample
+            }
+        }
+    }
+}
+static void selectSong(int delta) // moves selected song forward
+{
+    currentSongIndex += delta;
+    if (currentSongIndex < 0) currentSongIndex = wavSongCount - 1;
+    if (currentSongIndex >= wavSongCount) currentSongIndex = 0;
+    updateLcdDisplay(currentSongIndex, "STOPPED");
+    xprintf("Selected %d/%d: %s\n", currentSongIndex + 1, wavSongCount,
+            wavFilename[currentSongIndex]);
+}
+static void runWavPlayer(alt_up_audio_dev *audio_dev) // runs pushbutton-controlled WAV browser/player
+{
+    int r;
+    uint8_t last_switches = 0xFF;
+
+    disk_initialize((uint8_t)0);
+    r = f_mount((uint8_t)0, &Fatfs[0]);
+    if (r != FR_OK)
+    {
+        put_rc(r);
+        return;
+    }
+    if (buildSongIndex("") != FR_OK || wavSongCount == 0) // build song list from SD root
+    {
+        xprintf("No .wav files found in the SD-card root directory.\n");
+        updateLcdDisplay(0, "STOPPED");
+        return;
+    }
+    xprintf("\nWAV player ready: %d song(s)\n", wavSongCount);
+    clearButtonEvents();
+    updateLcdDisplay(currentSongIndex, "STOPPED");
+    for (;;)
+    {
+        uint8_t switches = IORD(SWITCH_PIO_BASE, 0) & 0x03;
+        if (switches != last_switches)
+        {
+            last_switches = switches;
+            updateLcdDisplay(currentSongIndex, "STOPPED");
+        }
+        if (takeButtonEvent(2))
+        {
+            r = playIndexedSong(audio_dev, currentSongIndex);
+            while (r == PLAYER_PREVIOUS || r == PLAYER_NEXT ||
+                   r == PLAYER_PREVIOUS_STOP || r == PLAYER_NEXT_STOP)
+            {
+                selectSong((r == PLAYER_PREVIOUS || r == PLAYER_PREVIOUS_STOP) ? -1 : 1);
+                if (r == PLAYER_PREVIOUS_STOP || r == PLAYER_NEXT_STOP)
+                    break;
+                r = playIndexedSong(audio_dev, currentSongIndex);
+            }
+            updateLcdDisplay(currentSongIndex, "STOPPED");
+        }
+        if (takeButtonEvent(1))
+        {
+            clearButtonEvents();
+            updateLcdDisplay(currentSongIndex, "STOPPED");
+            xprintf("Stopped\n");
+        }
+        if (takeButtonEvent(0)) selectSong(-1);
+        if (takeButtonEvent(3)) selectSong(1);
+    }
+}
 
 
 static
@@ -193,7 +528,9 @@ void display_help(void)
           "fi <log drv#> - Force initialize the logical drive\n"
           "fl [<path>] - Directory listing\n"
           "fo <mode> <file> - Open a file\n"
-    	  "fp -  (to be added by you) \n"
+          "fp <len> - Play WAV data from the open file\n"
+          "wi [path] - Build WAV index\n"
+          "wp - Pushbutton WAV player\n"
           "fr <len> - Read file\n"
           "fs [<path>] - Show logical drive status\n"
           "fz [<len>] - Get/Set transfer unit for fr/fw commands\n"
@@ -227,6 +564,11 @@ int main(void)
     alt_printf ("Opened audio device \n");
 
     IoInit();
+
+    init_debounce_timer();
+    initLcd();
+    lcdWriteLine(0, "WAV PLAYER");
+    lcdWriteLine(1, "INITIALIZING");
 
     IOWR(SEVEN_SEG_PIO_BASE,1,0x0007);
 
@@ -491,16 +833,50 @@ int main(void)
             case 'p':          /* fp <len> - read and play file from current fp */
                 if (!xatoi(&ptr, &p1))
                     break;
-                ofs = File1.fptr;
-                int i = 0;
-                while (p1)
-		{
-/*
-		<<<<<<<<<<<<<<<<<<<<<<<<< YOUR fp CODE GOES IN HERE >>>>>>>>>>>>>>>>>>>>>>
-*/
-		}
-		xprintf("done\n");
-		break;
+            {
+                uint8_t switches;
+                uint32_t step;
+                int repeats;
+                switches = IORD(SWITCH_PIO_BASE, 0) & 0x03; // reads SW1:SW0 to choose playback mode
+                step = switches == 0x02 ? 8 : 4; // double speed
+                repeats = switches == 0x01 ? 2 : 1; // half speed
+                res = f_lseek(&File1, 0);
+                if (res == FR_OK) res = f_read(&File1, Buff, WAV_HEADER_SIZE, &s2); // skips the 44-byte WAV header
+                if (res != FR_OK || s2 != WAV_HEADER_SIZE)
+                {
+                    if (res != FR_OK) put_rc(res);
+                    else xprintf("Could not read WAV header\n");
+                    break;
+                }
+                while (p1 > 0) // keeps playing until requested byte count is done
+                {
+                    cnt = (uint32_t)p1 > sizeof(Buff) ? sizeof(Buff) : (uint32_t)p1; // choose how many bytes to read
+                    cnt -= cnt % step;
+                    if (!cnt) break;
+                    res = f_read(&File1, Buff, cnt, &s2);
+                    if (res != FR_OK || !s2)
+                    {
+                        if (res != FR_OK) put_rc(res);
+                        break;
+                    }
+                    for (uint32_t i = 0; i + 3 < s2; i += step) // walk through one frame
+                    {
+                        uint16_t left = (uint16_t)Buff[i] | ((uint16_t)Buff[i + 1] << 8); // combines WAV bytes into 16-bit left and right audio samples
+                        uint16_t right = switches == 0x03 ? left : ((uint16_t)Buff[i + 2] | ((uint16_t)Buff[i + 3] << 8)); // if mono mode is selected, copy left sample to right channel too
+                        for (int repeat = 0; repeat < repeats; repeat++)
+                        {
+                            while (alt_up_audio_write_fifo_space(audio_dev, ALT_UP_AUDIO_LEFT) == 0 ||
+                                   alt_up_audio_write_fifo_space(audio_dev, ALT_UP_AUDIO_RIGHT) == 0) {}
+                            alt_up_audio_write_fifo_head(audio_dev, left, ALT_UP_AUDIO_LEFT);
+                            alt_up_audio_write_fifo_head(audio_dev, right, ALT_UP_AUDIO_RIGHT);
+                        }
+                    }
+                    p1 -= s2;
+                }
+                f_lseek(&File1, 0); // reset file pointer so file can be played again later
+                xprintf("done\n");
+                break;
+            }
             case 'r':          /* fr <len> - read file */
                 if (!xatoi(&ptr, &p1))
                     break;
@@ -562,6 +938,32 @@ int main(void)
                 break;
             }
             break; // end of FatFS API controls //
+        case 'w':              /* WAV index/player controls */
+            switch (*ptr++)
+            {
+                case 'i':          /* wi [path] - Build WAV index */
+                    while (*ptr == ' ') ptr++;
+                    if ((res = buildSongIndex(ptr)) != FR_OK)
+                    {
+                        put_rc(res);
+                        break;
+                    }
+                    xprintf("%d WAV file(s) indexed\n", wavSongCount);
+                    for (int i = 0; i < wavSongCount; i++)
+                    {
+                        xprintf("%d: %s ", i + 1, wavFilename[i]);
+                        xprintf("%u bytes\n", (unsigned int)wavFileSize[i]);
+                    }
+                    updateLcdDisplay(currentSongIndex, "STOPPED");
+                    break;
+                case 'p':          /* wp - Pushbutton WAV player */
+                    runWavPlayer(audio_dev);
+                    break;
+                default:
+                    xprintf("Use wi [path] or wp\n");
+                    break;
+            }
+            break;
 
         case 'h':
             display_help();
