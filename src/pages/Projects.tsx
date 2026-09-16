@@ -9,6 +9,7 @@ import dillpklImage from "@/assets/dillpklImage.png";
 import devpostIconImage from "@/assets/devpost.png";
 import footprintImage from "@/assets/footprint.png";
 import githubIconImage from "@/assets/github.png";
+import handShakeImage from "@/assets/handshake.jpg";
 import iClickImage from "@/assets/iclick.png";
 import irrigationSystemImage from "@/assets/irrigationsystem.png";
 import personalWebsiteImage from "@/assets/personal-website.png";
@@ -35,6 +36,16 @@ interface PlaylistRowProps extends ProjectItem {
 }
 
 const projectItems: ProjectItem[] = [
+  {
+    title: "hand.shake",
+    imageUrl: handShakeImage,
+    subtitle:
+      "A wearable glove made using a Raspberry Pi 5 that supplies force for those who need assistance gripping and holding everyday objects.",
+    dateAdded: "July 2026",
+    githubUrl: "https://github.com/srijac9/hand.shake",
+    devpostUrl: "https://devpost.com/software/hand-shake-wg3x9y",
+    videoUrl: "https://www.youtube.com/watch?v=rRj_OVckCcA&t=20s",
+  },
   {
     title: "Notes Wiki",
     imageUrl: notesWikiImage,

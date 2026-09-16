@@ -4,6 +4,7 @@ import PageEdgeShadow from "@/components/PageEdgeShadow";
 import experienceTitle from "@/assets/experience-title.png";
 import filmRoll from "@/assets/film-roll.png";
 import filmStrip from "@/assets/film-strip.png";
+import filmStrip2 from "@/assets/film-strip2.png";
 import workTitle from "@/assets/work-title.png";
 
 interface ExperienceProps {
@@ -27,7 +28,18 @@ const FILM_STRIP_SCROLL_OVERSHOOT_DOWN = 0.3;
 
 const experienceEntries: ExperienceEntry[] = [
   {
-    period: "Jan '26 - Present",
+    period: "Sept '26 - Present",
+    role: "AI Developer Intern",
+    organization: "Public Health Agency of Canada",
+    summary:
+      "Developing AI tools for the Canadian Hospitals Injury Reporting and Prevention Program to support public health data workflows and analysis.",
+    highlights: [
+      "Building AI-assisted tooling with Python and Django for injury reporting and prevention data workflows",
+    ],
+    technologies: ["Python", "Django"],
+  },
+  {
+    period: "Jan '26 - Aug '26",
     role: "Full Stack Developer Intern",
     organization: "Mission Perform Inc",
     summary:
@@ -128,22 +140,22 @@ function ExperienceEntryCard({ entry }: { entry: ExperienceEntry }) {
 
 function getFilmStripMetrics(viewportWidth: number) {
   if (viewportWidth >= 1280) {
-    return { expandedOffset: 0, collapsedOffset: -800, dragRange: 800 };
+    return { expandedOffset: 0, collapsedOffset: -1040, dragRange: 1040 };
   }
 
   if (viewportWidth >= 1024) {
-    return { expandedOffset: 0, collapsedOffset: -680, dragRange: 680 };
+    return { expandedOffset: 0, collapsedOffset: -900, dragRange: 900 };
   }
 
   if (viewportWidth >= 768) {
-    return { expandedOffset: 0, collapsedOffset: -530, dragRange: 530 };
+    return { expandedOffset: 0, collapsedOffset: -610, dragRange: 610 };
   }
 
   if (viewportWidth >= 640) {
-    return { expandedOffset: 0, collapsedOffset: -435, dragRange: 435 };
+    return { expandedOffset: 0, collapsedOffset: -460, dragRange: 460 };
   }
 
-  return { expandedOffset: 0, collapsedOffset: -350, dragRange: 350 };
+  return { expandedOffset: 0, collapsedOffset: -390, dragRange: 390 };
 }
 
 function getFilmStripAutoScrollDelta(pointerY: number, viewportHeight: number) {
@@ -347,7 +359,7 @@ const Experience = ({
         <div className={`px-6 pb-16 md:px-12 lg:px-16 ${embedded ? "pt-16 md:pt-20" : "pt-24"}`}>
           <div className="mx-auto max-w-[1280px]">
             <div className="mb-8 flex flex-col gap-6 text-left md:mb-10 lg:flex-row lg:items-start lg:justify-between lg:gap-10">
-              <div className="relative flex min-w-0 flex-1 flex-col items-start lg:min-h-[82rem] xl:min-h-[92rem]">
+              <div className="relative flex min-w-0 flex-1 flex-col items-start lg:min-h-[104rem] xl:min-h-[116rem]">
                 <div className="pointer-events-none relative z-20 flex flex-col items-start">
                   <img
                     src={workTitle}
@@ -383,18 +395,28 @@ const Experience = ({
                   className="pointer-events-none relative z-[2] w-[11rem] object-contain drop-shadow-[0_14px_32px_rgba(47,12,14,0.22)] sm:w-[13rem] md:w-[15.5rem] lg:w-[24rem] xl:w-[27.5rem]"
                   draggable={false}
                 />
-                <div className="-mt-[2.2rem] h-[38rem] w-[25rem] max-w-none sm:-mt-[2.55rem] sm:h-[44rem] sm:w-[30rem] md:-mt-[3.45rem] md:h-[55rem] md:w-[38rem] lg:-mt-[5.55rem] lg:h-[82rem] lg:w-[60rem] xl:-mt-[6.45rem] xl:h-[94rem] xl:w-[69rem]">
+                <div className="-mt-[2.2rem] h-[38rem] w-[25rem] max-w-none sm:-mt-[2.55rem] sm:h-[44rem] sm:w-[30rem] md:-mt-[3.45rem] md:h-[55rem] md:w-[38rem] lg:-mt-[5.55rem] lg:h-[100rem] lg:w-[60rem] xl:-mt-[6.45rem] xl:h-[112rem] xl:w-[69rem]">
                   <div className="relative flex h-full w-full justify-center overflow-hidden pb-[3rem] sm:pb-[3.5rem] md:pb-[4rem] lg:pb-[5rem] xl:pb-[5.5rem]">
-                    <img
-                      src={filmStrip}
-                      alt="Film strip"
-                      className="pointer-events-none relative z-[1] w-[39rem] max-w-none object-contain contrast-[1.08] sm:w-[47rem] md:w-[60rem] lg:w-[89rem] xl:w-[102rem]"
+                    <div
+                      className="pointer-events-none relative z-[1] ml-8 flex w-[19rem] max-w-none flex-col items-center gap-0 overflow-hidden contrast-[1.08] sm:ml-10 sm:w-[23rem] md:ml-12 md:w-[29.5rem] lg:ml-16 lg:w-[42rem] xl:ml-20 xl:w-[48rem]"
                       style={{
                         transform: `translateY(${filmStripTranslateY}px)`,
                         clipPath: "inset(0 4.5% 0 4.5%)",
                       }}
-                      draggable={false}
-                    />
+                    >
+                      <img
+                        src={filmStrip2}
+                        alt="Film strip extension"
+                        className="block w-full max-w-none object-contain"
+                        draggable={false}
+                      />
+                      <img
+                        src={filmStrip}
+                        alt="Film strip"
+                        className="block w-full max-w-none object-contain"
+                        draggable={false}
+                      />
+                    </div>
                     <button
                       type="button"
                       aria-label="Drag film strip"

@@ -22,12 +22,26 @@ import p14Image from "@/assets/p14.jpg";
 import p15Image from "@/assets/p15.jpg";
 import p16Image from "@/assets/p16.jpg";
 import p17Image from "@/assets/p17.JPG";
+import p18Image from "@/assets/p18.jpeg";
 import p19Image from "@/assets/p19.JPG";
 import p20Image from "@/assets/p20.JPG";
 import p21Image from "@/assets/p21.JPG";
+import p22Image from "@/assets/p22.jpeg";
+import p23Image from "@/assets/p23.jpeg";
 import p24Image from "@/assets/p24.JPG";
 import p25Image from "@/assets/p25.JPG";
 import p26Image from "@/assets/p26.JPG";
+import p27Image from "@/assets/p27.JPG";
+import p28Image from "@/assets/p28.jpeg";
+import p29Image from "@/assets/p29.jpeg";
+import p30Image from "@/assets/p30.jpeg";
+import p31Image from "@/assets/p31.jpeg";
+import p32Image from "@/assets/p32.JPG";
+import p33Image from "@/assets/p33.JPG";
+import p34Image from "@/assets/p34.JPG";
+import p35Image from "@/assets/p35.JPG";
+import p36Image from "@/assets/p36.JPG";
+import p37Image from "@/assets/p37.JPG";
 
 interface PhotosProps {
   embedded?: boolean;
@@ -37,7 +51,7 @@ interface PhotoItem {
   id: number;
   src: string;
   alt: string;
-  location: "ontario" | "italy";
+  location: "ontario" | "italy" | "vancouver" | "maritimes";
 }
 
 type PhotoLocationFilter = "all" | PhotoItem["location"];
@@ -60,12 +74,26 @@ const photoItems: PhotoItem[] = [
   { id: 15, src: p15Image, alt: "Photo 15", location: "italy" },
   { id: 16, src: p16Image, alt: "Photo 16", location: "ontario" },
   { id: 17, src: p17Image, alt: "Photo 17", location: "ontario" },
+  { id: 18, src: p18Image, alt: "Vancouver photo 18", location: "vancouver" },
   { id: 19, src: p19Image, alt: "Photo 19", location: "italy" },
   { id: 20, src: p20Image, alt: "Photo 20", location: "italy" },
   { id: 21, src: p21Image, alt: "Photo 21", location: "italy" },
+  { id: 22, src: p22Image, alt: "Vancouver photo 22", location: "vancouver" },
+  { id: 23, src: p23Image, alt: "Vancouver photo 23", location: "vancouver" },
   { id: 24, src: p24Image, alt: "Photo 24", location: "italy" },
   { id: 25, src: p25Image, alt: "Photo 25", location: "italy" },
   { id: 26, src: p26Image, alt: "Photo 26", location: "italy" },
+  { id: 27, src: p27Image, alt: "Maritimes photo 27", location: "maritimes" },
+  { id: 28, src: p28Image, alt: "Vancouver photo 28", location: "vancouver" },
+  { id: 29, src: p29Image, alt: "Vancouver photo 29", location: "vancouver" },
+  { id: 30, src: p30Image, alt: "Vancouver photo 30", location: "vancouver" },
+  { id: 31, src: p31Image, alt: "Vancouver photo 31", location: "vancouver" },
+  { id: 32, src: p32Image, alt: "Maritimes photo 32", location: "maritimes" },
+  { id: 33, src: p33Image, alt: "Maritimes photo 33", location: "maritimes" },
+  { id: 34, src: p34Image, alt: "Maritimes photo 34", location: "maritimes" },
+  { id: 35, src: p35Image, alt: "Maritimes photo 35", location: "maritimes" },
+  { id: 36, src: p36Image, alt: "Maritimes photo 36", location: "maritimes" },
+  { id: 37, src: p37Image, alt: "Maritimes photo 37", location: "maritimes" },
 ];
 
 const photoItemsById = new Map(photoItems.map((photo) => [photo.id, photo]));
@@ -77,14 +105,14 @@ const createColumnLayout = (columnIds: number[][]) =>
   );
 
 const twoColumnLayout = createColumnLayout([
-  [26, 9, 13, 14, 25, 6, 5, 19, 7, 2, 11, 21],
-  [1, 10, 12, 15, 3, 4, 17, 16, 24, 20, 8],
+  [32, 30, 26, 9, 13, 14, 25, 6, 22, 5, 19, 7, 28, 2, 11, 21, 31, 36, 27],
+  [33, 18, 1, 10, 12, 15, 3, 4, 17, 16, 24, 20, 23, 8, 29, 34, 35, 37],
 ]);
 
 const threeColumnLayout = createColumnLayout([
-  [20, 3, 17, 12, 4, 10, 21, 8],
-  [6, 15, 2, 14, 7, 11, 16, 5],
-  [25, 9, 24, 13, 26, 1, 19],
+  [32, 20, 3, 18, 17, 12, 4, 10, 21, 30, 8, 31, 36],
+  [33, 6, 15, 2, 22, 14, 7, 11, 28, 16, 5, 37],
+  [34, 25, 9, 24, 13, 26, 1, 23, 19, 29, 35, 27],
 ]);
 
 const filteredThreeColumnLayouts = {
@@ -97,6 +125,16 @@ const filteredThreeColumnLayouts = {
     [21, 9, 25, 24, 19, 8],
     [14, 1, 12, 5, 20],
     [3, 13, 15, 26, 4],
+  ]),
+  vancouver: createColumnLayout([
+    [18, 30],
+    [22, 28, 31],
+    [23, 29],
+  ]),
+  maritimes: createColumnLayout([
+    [32, 35, 27],
+    [33, 36],
+    [34, 37],
   ]),
 } satisfies Record<PhotoItem["location"], PhotoItem[][]>;
 
@@ -194,6 +232,70 @@ const Photos = ({ embedded = false }: PhotosProps) => {
                     }`}
                   >
                     Ontario
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveFilter((current) => (current === "maritimes" ? "all" : "maritimes"))
+                  }
+                  className="absolute -translate-x-1/2 -translate-y-full bg-transparent p-0 text-left focus-visible:outline-none"
+                  style={{ left: "33%", top: "30.5%" }}
+                  aria-label="Filter photos to the Maritimes"
+                  aria-pressed={activeFilter === "maritimes"}
+                  title="Maritimes"
+                >
+                  <img
+                    src={activeFilter === "maritimes" ? pinClickedImage : pinImage}
+                    alt=""
+                    aria-hidden="true"
+                    className={`w-5 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-all duration-300 sm:w-6 md:w-7 ${
+                      activeFilter === "maritimes"
+                        ? "scale-[1.14]"
+                        : "opacity-88 hover:-translate-y-1 hover:scale-[1.12] hover:drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
+                    }`}
+                    draggable={false}
+                  />
+                  <span
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-1 text-[0.62rem] font-typewriter uppercase tracking-[0.18em] transition-colors ${
+                      activeFilter === "maritimes"
+                        ? "bg-paper text-burgundy-dark"
+                        : "bg-background/70 text-paper/85"
+                    }`}
+                  >
+                    Maritimes
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveFilter((current) => (current === "vancouver" ? "all" : "vancouver"))
+                  }
+                  className="absolute -translate-x-1/2 -translate-y-full bg-transparent p-0 text-left focus-visible:outline-none"
+                  style={{ left: "12.5%", top: "31%" }}
+                  aria-label="Filter photos to Vancouver"
+                  aria-pressed={activeFilter === "vancouver"}
+                  title="Vancouver"
+                >
+                  <img
+                    src={activeFilter === "vancouver" ? pinClickedImage : pinImage}
+                    alt=""
+                    aria-hidden="true"
+                    className={`w-5 object-contain drop-shadow-[0_8px_14px_rgba(0,0,0,0.35)] transition-all duration-300 sm:w-6 md:w-7 ${
+                      activeFilter === "vancouver"
+                        ? "scale-[1.14]"
+                        : "opacity-88 hover:-translate-y-1 hover:scale-[1.12] hover:drop-shadow-[0_14px_24px_rgba(0,0,0,0.42)]"
+                    }`}
+                    draggable={false}
+                  />
+                  <span
+                    className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2 py-1 text-[0.62rem] font-typewriter uppercase tracking-[0.18em] transition-colors ${
+                      activeFilter === "vancouver"
+                        ? "bg-paper text-burgundy-dark"
+                        : "bg-background/70 text-paper/85"
+                    }`}
+                  >
+                    Vancouver
                   </span>
                 </button>
                 <button
